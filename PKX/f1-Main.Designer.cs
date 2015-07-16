@@ -97,6 +97,7 @@
             this.CAL_MetDate = new System.Windows.Forms.DateTimePicker();
             this.CB_EncounterType = new System.Windows.Forms.ComboBox();
             this.Tab_Stats = new System.Windows.Forms.TabPage();
+            this.CB_HPType = new System.Windows.Forms.ComboBox();
             this.CHK_HackedStats = new System.Windows.Forms.CheckBox();
             this.Label_CharacteristicPrefix = new System.Windows.Forms.Label();
             this.L_Potential = new System.Windows.Forms.Label();
@@ -129,7 +130,6 @@
             this.Label_ContestStats = new System.Windows.Forms.Label();
             this.BTN_RandomEVs = new System.Windows.Forms.Button();
             this.BTN_RandomIVs = new System.Windows.Forms.Button();
-            this.Label_HPTYPE = new System.Windows.Forms.Label();
             this.Label_HiddenPowerPrefix = new System.Windows.Forms.Label();
             this.Label_Stats = new System.Windows.Forms.Label();
             this.Label_EVs = new System.Windows.Forms.Label();
@@ -261,7 +261,7 @@
             this.bpkx1 = new System.Windows.Forms.PictureBox();
             this.B_BoxRight = new System.Windows.Forms.Button();
             this.B_BoxLeft = new System.Windows.Forms.Button();
-            this.C_BoxSelect = new System.Windows.Forms.ComboBox();
+            this.CB_BoxSelect = new System.Windows.Forms.ComboBox();
             this.Tab_PartyBattle = new System.Windows.Forms.TabPage();
             this.PAN_BattleBox = new System.Windows.Forms.Panel();
             this.bbpkx1 = new System.Windows.Forms.PictureBox();
@@ -331,6 +331,7 @@
             this.B_OpenSuperTraining = new System.Windows.Forms.Button();
             this.L_SAVINDEX = new System.Windows.Forms.Label();
             this.dragout = new System.Windows.Forms.PictureBox();
+            this.L_QR = new System.Windows.Forms.Label();
             this.tabMain.SuspendLayout();
             this.Tab_Main.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Label_IsShiny)).BeginInit();
@@ -534,7 +535,7 @@
             this.TB_PID.MaxLength = 8;
             this.TB_PID.Name = "TB_PID";
             this.TB_PID.Size = new System.Drawing.Size(60, 20);
-            this.TB_PID.TabIndex = 60;
+            this.TB_PID.TabIndex = 1;
             this.TB_PID.Text = "12345678";
             this.TB_PID.TextChanged += new System.EventHandler(this.update_ID);
             this.TB_PID.MouseHover += new System.EventHandler(this.getTSV);
@@ -657,7 +658,7 @@
             this.BTN_RerollPID.Location = new System.Drawing.Point(188, 7);
             this.BTN_RerollPID.Name = "BTN_RerollPID";
             this.BTN_RerollPID.Size = new System.Drawing.Size(40, 20);
-            this.BTN_RerollPID.TabIndex = 2;
+            this.BTN_RerollPID.TabIndex = 1;
             this.BTN_RerollPID.Text = "Reroll";
             this.BTN_RerollPID.UseVisualStyleBackColor = true;
             this.BTN_RerollPID.Click += new System.EventHandler(this.updateRandomPID);
@@ -703,12 +704,6 @@
             // 
             this.CB_PKRSDays.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CB_PKRSDays.FormattingEnabled = true;
-            this.CB_PKRSDays.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4"});
             this.CB_PKRSDays.Location = new System.Drawing.Point(197, 213);
             this.CB_PKRSDays.Name = "CB_PKRSDays";
             this.CB_PKRSDays.Size = new System.Drawing.Size(30, 21);
@@ -943,7 +938,7 @@
             this.BTN_Shinytize.Location = new System.Drawing.Point(50, 6);
             this.BTN_Shinytize.Name = "BTN_Shinytize";
             this.BTN_Shinytize.Size = new System.Drawing.Size(26, 22);
-            this.BTN_Shinytize.TabIndex = 58;
+            this.BTN_Shinytize.TabIndex = 1;
             this.BTN_Shinytize.Text = "☆";
             this.BTN_Shinytize.UseVisualStyleBackColor = true;
             this.BTN_Shinytize.Click += new System.EventHandler(this.updateShinyPID);
@@ -1037,7 +1032,7 @@
             this.CHK_Fateful.Location = new System.Drawing.Point(105, 115);
             this.CHK_Fateful.Name = "CHK_Fateful";
             this.CHK_Fateful.Size = new System.Drawing.Size(110, 17);
-            this.CHK_Fateful.TabIndex = 7;
+            this.CHK_Fateful.TabIndex = 6;
             this.CHK_Fateful.Text = "Fateful Encounter";
             this.CHK_Fateful.UseVisualStyleBackColor = true;
             // 
@@ -1064,7 +1059,7 @@
             this.CB_EggLocation.Location = new System.Drawing.Point(71, 19);
             this.CB_EggLocation.Name = "CB_EggLocation";
             this.CB_EggLocation.Size = new System.Drawing.Size(122, 21);
-            this.CB_EggLocation.TabIndex = 11;
+            this.CB_EggLocation.TabIndex = 10;
             this.CB_EggLocation.SelectedIndexChanged += new System.EventHandler(this.validateComboBox2);
             this.CB_EggLocation.KeyDown += new System.Windows.Forms.KeyEventHandler(this.removedropCB);
             this.CB_EggLocation.Validating += new System.ComponentModel.CancelEventHandler(this.validateComboBox);
@@ -1173,7 +1168,7 @@
             this.CB_MetLocation.Location = new System.Drawing.Point(105, 27);
             this.CB_MetLocation.Name = "CB_MetLocation";
             this.CB_MetLocation.Size = new System.Drawing.Size(122, 21);
-            this.CB_MetLocation.TabIndex = 10;
+            this.CB_MetLocation.TabIndex = 2;
             this.CB_MetLocation.SelectedIndexChanged += new System.EventHandler(this.validateComboBox2);
             this.CB_MetLocation.KeyDown += new System.Windows.Forms.KeyEventHandler(this.removedropCB);
             this.CB_MetLocation.Validating += new System.ComponentModel.CancelEventHandler(this.validateComboBox);
@@ -1221,11 +1216,12 @@
             this.CB_EncounterType.Location = new System.Drawing.Point(105, 135);
             this.CB_EncounterType.Name = "CB_EncounterType";
             this.CB_EncounterType.Size = new System.Drawing.Size(122, 21);
-            this.CB_EncounterType.TabIndex = 6;
+            this.CB_EncounterType.TabIndex = 7;
             // 
             // Tab_Stats
             // 
             this.Tab_Stats.AllowDrop = true;
+            this.Tab_Stats.Controls.Add(this.CB_HPType);
             this.Tab_Stats.Controls.Add(this.CHK_HackedStats);
             this.Tab_Stats.Controls.Add(this.Label_CharacteristicPrefix);
             this.Tab_Stats.Controls.Add(this.L_Potential);
@@ -1258,7 +1254,6 @@
             this.Tab_Stats.Controls.Add(this.Label_ContestStats);
             this.Tab_Stats.Controls.Add(this.BTN_RandomEVs);
             this.Tab_Stats.Controls.Add(this.BTN_RandomIVs);
-            this.Tab_Stats.Controls.Add(this.Label_HPTYPE);
             this.Tab_Stats.Controls.Add(this.Label_HiddenPowerPrefix);
             this.Tab_Stats.Controls.Add(this.Label_Stats);
             this.Tab_Stats.Controls.Add(this.Label_EVs);
@@ -1284,6 +1279,18 @@
             this.Tab_Stats.TabIndex = 2;
             this.Tab_Stats.Text = "Stats";
             this.Tab_Stats.UseVisualStyleBackColor = true;
+            // 
+            // CB_HPType
+            // 
+            this.CB_HPType.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.CB_HPType.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.CB_HPType.DropDownWidth = 80;
+            this.CB_HPType.FormattingEnabled = true;
+            this.CB_HPType.Location = new System.Drawing.Point(162, 176);
+            this.CB_HPType.Name = "CB_HPType";
+            this.CB_HPType.Size = new System.Drawing.Size(70, 21);
+            this.CB_HPType.TabIndex = 44;
+            this.CB_HPType.SelectedIndexChanged += new System.EventHandler(this.updateHPType);
             // 
             // CHK_HackedStats
             // 
@@ -1617,15 +1624,6 @@
             this.BTN_RandomIVs.Text = "Randomize IVs";
             this.BTN_RandomIVs.UseVisualStyleBackColor = true;
             this.BTN_RandomIVs.Click += new System.EventHandler(this.updateRandomIVs);
-            // 
-            // Label_HPTYPE
-            // 
-            this.Label_HPTYPE.AutoSize = true;
-            this.Label_HPTYPE.Location = new System.Drawing.Point(160, 179);
-            this.Label_HPTYPE.Name = "Label_HPTYPE";
-            this.Label_HPTYPE.Size = new System.Drawing.Size(33, 13);
-            this.Label_HPTYPE.TabIndex = 30;
-            this.Label_HPTYPE.Text = "(type)";
             // 
             // Label_HiddenPowerPrefix
             // 
@@ -2161,7 +2159,7 @@
             this.TB_EC.MaxLength = 8;
             this.TB_EC.Name = "TB_EC";
             this.TB_EC.Size = new System.Drawing.Size(60, 20);
-            this.TB_EC.TabIndex = 61;
+            this.TB_EC.TabIndex = 8;
             this.TB_EC.Text = "12345678";
             this.TB_EC.TextChanged += new System.EventHandler(this.update_ID);
             // 
@@ -2173,7 +2171,7 @@
             this.GB_nOT.Location = new System.Drawing.Point(40, 90);
             this.GB_nOT.Name = "GB_nOT";
             this.GB_nOT.Size = new System.Drawing.Size(190, 50);
-            this.GB_nOT.TabIndex = 43;
+            this.GB_nOT.TabIndex = 2;
             this.GB_nOT.TabStop = false;
             this.GB_nOT.Text = "Latest (not OT) Handler";
             // 
@@ -2196,7 +2194,7 @@
             this.TB_OTt2.MaxLength = 12;
             this.TB_OTt2.Name = "TB_OTt2";
             this.TB_OTt2.Size = new System.Drawing.Size(94, 20);
-            this.TB_OTt2.TabIndex = 6;
+            this.TB_OTt2.TabIndex = 1;
             this.TB_OTt2.WordWrap = false;
             this.TB_OTt2.TextChanged += new System.EventHandler(this.updateNotOT);
             this.TB_OTt2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.updateNicknameClick);
@@ -2242,7 +2240,7 @@
             this.BTN_RerollEC.Location = new System.Drawing.Point(138, 276);
             this.BTN_RerollEC.Name = "BTN_RerollEC";
             this.BTN_RerollEC.Size = new System.Drawing.Size(38, 20);
-            this.BTN_RerollEC.TabIndex = 16;
+            this.BTN_RerollEC.TabIndex = 7;
             this.BTN_RerollEC.Text = "Reroll";
             this.BTN_RerollEC.UseVisualStyleBackColor = true;
             this.BTN_RerollEC.Click += new System.EventHandler(this.updateRandomEC);
@@ -2252,7 +2250,7 @@
             this.BTN_History.Location = new System.Drawing.Point(138, 250);
             this.BTN_History.Name = "BTN_History";
             this.BTN_History.Size = new System.Drawing.Size(100, 23);
-            this.BTN_History.TabIndex = 15;
+            this.BTN_History.TabIndex = 6;
             this.BTN_History.Text = "Memories/Amie";
             this.BTN_History.UseVisualStyleBackColor = true;
             this.BTN_History.Click += new System.EventHandler(this.openHistory);
@@ -2262,7 +2260,7 @@
             this.BTN_Ribbons.Location = new System.Drawing.Point(32, 250);
             this.BTN_Ribbons.Name = "BTN_Ribbons";
             this.BTN_Ribbons.Size = new System.Drawing.Size(100, 23);
-            this.BTN_Ribbons.TabIndex = 14;
+            this.BTN_Ribbons.TabIndex = 5;
             this.BTN_Ribbons.Text = "Ribbons/Medals";
             this.BTN_Ribbons.UseVisualStyleBackColor = true;
             this.BTN_Ribbons.Click += new System.EventHandler(this.openRibbons);
@@ -2407,7 +2405,7 @@
             this.TB_ExtraByte.Mask = "000";
             this.TB_ExtraByte.Name = "TB_ExtraByte";
             this.TB_ExtraByte.Size = new System.Drawing.Size(28, 20);
-            this.TB_ExtraByte.TabIndex = 8;
+            this.TB_ExtraByte.TabIndex = 2;
             this.TB_ExtraByte.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TB_ExtraByte.TextChanged += new System.EventHandler(this.updateExtraByteValue);
             // 
@@ -2447,7 +2445,7 @@
             this.CB_ExtraBytes.Location = new System.Drawing.Point(20, 18);
             this.CB_ExtraBytes.Name = "CB_ExtraBytes";
             this.CB_ExtraBytes.Size = new System.Drawing.Size(57, 21);
-            this.CB_ExtraBytes.TabIndex = 7;
+            this.CB_ExtraBytes.TabIndex = 1;
             this.CB_ExtraBytes.SelectedIndexChanged += new System.EventHandler(this.updateExtraByteIndex);
             // 
             // GB_OT
@@ -2462,7 +2460,7 @@
             this.GB_OT.Location = new System.Drawing.Point(40, 13);
             this.GB_OT.Name = "GB_OT";
             this.GB_OT.Size = new System.Drawing.Size(190, 75);
-            this.GB_OT.TabIndex = 2;
+            this.GB_OT.TabIndex = 1;
             this.GB_OT.TabStop = false;
             this.GB_OT.Text = "Trainer Information";
             // 
@@ -2596,7 +2594,7 @@
             this.Menu_Open.Name = "Menu_Open";
             this.Menu_Open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.Menu_Open.ShowShortcutKeys = false;
-            this.Menu_Open.Size = new System.Drawing.Size(152, 22);
+            this.Menu_Open.Size = new System.Drawing.Size(114, 22);
             this.Menu_Open.Text = "&Open...";
             this.Menu_Open.Click += new System.EventHandler(this.mainMenuOpen);
             // 
@@ -2605,7 +2603,7 @@
             this.Menu_Save.Name = "Menu_Save";
             this.Menu_Save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.Menu_Save.ShowShortcutKeys = false;
-            this.Menu_Save.Size = new System.Drawing.Size(152, 22);
+            this.Menu_Save.Size = new System.Drawing.Size(114, 22);
             this.Menu_Save.Text = "&Save as...";
             this.Menu_Save.Click += new System.EventHandler(this.mainMenuSave);
             // 
@@ -2614,7 +2612,7 @@
             this.Menu_Exit.Name = "Menu_Exit";
             this.Menu_Exit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
             this.Menu_Exit.ShowShortcutKeys = false;
-            this.Menu_Exit.Size = new System.Drawing.Size(152, 22);
+            this.Menu_Exit.Size = new System.Drawing.Size(114, 22);
             this.Menu_Exit.Text = "&Exit";
             this.Menu_Exit.Click += new System.EventHandler(this.mainMenuExit);
             // 
@@ -2672,7 +2670,7 @@
             this.Menu_Language.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CB_MainLanguage});
             this.Menu_Language.Name = "Menu_Language";
-            this.Menu_Language.Size = new System.Drawing.Size(183, 22);
+            this.Menu_Language.Size = new System.Drawing.Size(139, 22);
             this.Menu_Language.Text = "Language";
             // 
             // CB_MainLanguage
@@ -2687,15 +2685,15 @@
             this.Menu_About.Name = "Menu_About";
             this.Menu_About.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
             this.Menu_About.ShowShortcutKeys = false;
-            this.Menu_About.Size = new System.Drawing.Size(183, 22);
+            this.Menu_About.Size = new System.Drawing.Size(139, 22);
             this.Menu_About.Text = "A&bout PKHeX";
             this.Menu_About.Click += new System.EventHandler(this.mainMenuAbout);
             // 
             // Menu_Unicode
             // 
             this.Menu_Unicode.Name = "Menu_Unicode";
-            this.Menu_Unicode.Size = new System.Drawing.Size(183, 22);
-            this.Menu_Unicode.Text = "Toggle Unicode Text";
+            this.Menu_Unicode.Size = new System.Drawing.Size(139, 22);
+            this.Menu_Unicode.Text = "Toggle Font";
             this.Menu_Unicode.Click += new System.EventHandler(this.mainMenuUnicode);
             // 
             // testToolStripMenuItem
@@ -2725,14 +2723,15 @@
             this.tabBoxMulti.Name = "tabBoxMulti";
             this.tabBoxMulti.SelectedIndex = 0;
             this.tabBoxMulti.Size = new System.Drawing.Size(310, 225);
-            this.tabBoxMulti.TabIndex = 5;
+            this.tabBoxMulti.TabIndex = 50;
+            this.tabBoxMulti.SelectedIndexChanged += new System.EventHandler(this.switchSAVTab);
             // 
             // Tab_Box
             // 
             this.Tab_Box.Controls.Add(this.PAN_Box);
             this.Tab_Box.Controls.Add(this.B_BoxRight);
             this.Tab_Box.Controls.Add(this.B_BoxLeft);
-            this.Tab_Box.Controls.Add(this.C_BoxSelect);
+            this.Tab_Box.Controls.Add(this.CB_BoxSelect);
             this.Tab_Box.Location = new System.Drawing.Point(4, 22);
             this.Tab_Box.Name = "Tab_Box";
             this.Tab_Box.Padding = new System.Windows.Forms.Padding(3);
@@ -3221,11 +3220,11 @@
             this.B_BoxLeft.UseVisualStyleBackColor = true;
             this.B_BoxLeft.Click += new System.EventHandler(this.clickBoxLeft);
             // 
-            // C_BoxSelect
+            // CB_BoxSelect
             // 
-            this.C_BoxSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.C_BoxSelect.FormattingEnabled = true;
-            this.C_BoxSelect.Items.AddRange(new object[] {
+            this.CB_BoxSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CB_BoxSelect.FormattingEnabled = true;
+            this.CB_BoxSelect.Items.AddRange(new object[] {
             "Box 1",
             "Box 2",
             "Box 3",
@@ -3257,11 +3256,11 @@
             "Box 29",
             "Box 30",
             "Box 31"});
-            this.C_BoxSelect.Location = new System.Drawing.Point(88, 10);
-            this.C_BoxSelect.Name = "C_BoxSelect";
-            this.C_BoxSelect.Size = new System.Drawing.Size(127, 21);
-            this.C_BoxSelect.TabIndex = 0;
-            this.C_BoxSelect.SelectedIndexChanged += new System.EventHandler(this.getBox);
+            this.CB_BoxSelect.Location = new System.Drawing.Point(88, 10);
+            this.CB_BoxSelect.Name = "CB_BoxSelect";
+            this.CB_BoxSelect.Size = new System.Drawing.Size(127, 21);
+            this.CB_BoxSelect.TabIndex = 0;
+            this.CB_BoxSelect.SelectedIndexChanged += new System.EventHandler(this.getBox);
             // 
             // Tab_PartyBattle
             // 
@@ -3868,7 +3867,7 @@
             this.B_OpenHallofFame.Location = new System.Drawing.Point(230, 41);
             this.B_OpenHallofFame.Name = "B_OpenHallofFame";
             this.B_OpenHallofFame.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenHallofFame.TabIndex = 4;
+            this.B_OpenHallofFame.TabIndex = 8;
             this.B_OpenHallofFame.Text = "Hall of Fame";
             this.B_OpenHallofFame.UseVisualStyleBackColor = true;
             this.B_OpenHallofFame.Click += new System.EventHandler(this.B_OUTHallofFame_Click);
@@ -3878,7 +3877,7 @@
             this.B_OUTPasserby.Location = new System.Drawing.Point(230, 12);
             this.B_OUTPasserby.Name = "B_OUTPasserby";
             this.B_OUTPasserby.Size = new System.Drawing.Size(75, 23);
-            this.B_OUTPasserby.TabIndex = 0;
+            this.B_OUTPasserby.TabIndex = 4;
             this.B_OUTPasserby.Text = "Passerby";
             this.B_OUTPasserby.UseVisualStyleBackColor = true;
             this.B_OUTPasserby.Click += new System.EventHandler(this.B_OUTPasserby_Click);
@@ -3888,7 +3887,7 @@
             this.B_OpenPokepuffs.Location = new System.Drawing.Point(5, 12);
             this.B_OpenPokepuffs.Name = "B_OpenPokepuffs";
             this.B_OpenPokepuffs.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenPokepuffs.TabIndex = 6;
+            this.B_OpenPokepuffs.TabIndex = 1;
             this.B_OpenPokepuffs.Text = "‎Poké Puffs";
             this.B_OpenPokepuffs.UseVisualStyleBackColor = true;
             this.B_OpenPokepuffs.Click += new System.EventHandler(this.B_OpenPokepuffs_Click);
@@ -3898,7 +3897,7 @@
             this.B_OpenBoxLayout.Location = new System.Drawing.Point(5, 41);
             this.B_OpenBoxLayout.Name = "B_OpenBoxLayout";
             this.B_OpenBoxLayout.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenBoxLayout.TabIndex = 7;
+            this.B_OpenBoxLayout.TabIndex = 5;
             this.B_OpenBoxLayout.Text = "Box Layout";
             this.B_OpenBoxLayout.UseVisualStyleBackColor = true;
             this.B_OpenBoxLayout.Click += new System.EventHandler(this.B_OpenBoxLayout_Click);
@@ -3908,7 +3907,7 @@
             this.B_OpenOPowers.Location = new System.Drawing.Point(5, 70);
             this.B_OpenOPowers.Name = "B_OpenOPowers";
             this.B_OpenOPowers.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenOPowers.TabIndex = 8;
+            this.B_OpenOPowers.TabIndex = 9;
             this.B_OpenOPowers.Text = "O-Powers";
             this.B_OpenOPowers.UseVisualStyleBackColor = true;
             this.B_OpenOPowers.Click += new System.EventHandler(this.B_OpenOPowers_Click);
@@ -3918,7 +3917,7 @@
             this.B_OpenItemPouch.Location = new System.Drawing.Point(80, 12);
             this.B_OpenItemPouch.Name = "B_OpenItemPouch";
             this.B_OpenItemPouch.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenItemPouch.TabIndex = 9;
+            this.B_OpenItemPouch.TabIndex = 2;
             this.B_OpenItemPouch.Text = "Items";
             this.B_OpenItemPouch.UseVisualStyleBackColor = true;
             this.B_OpenItemPouch.Click += new System.EventHandler(this.B_OpenItemPouch_Click);
@@ -3938,7 +3937,7 @@
             this.B_OpenWondercards.Location = new System.Drawing.Point(80, 41);
             this.B_OpenWondercards.Name = "B_OpenWondercards";
             this.B_OpenWondercards.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenWondercards.TabIndex = 11;
+            this.B_OpenWondercards.TabIndex = 6;
             this.B_OpenWondercards.Text = "Wondercard";
             this.B_OpenWondercards.UseVisualStyleBackColor = true;
             this.B_OpenWondercards.Click += new System.EventHandler(this.B_OpenWondercards_Click);
@@ -3948,7 +3947,7 @@
             this.B_OpenTrainerInfo.Location = new System.Drawing.Point(155, 12);
             this.B_OpenTrainerInfo.Name = "B_OpenTrainerInfo";
             this.B_OpenTrainerInfo.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenTrainerInfo.TabIndex = 12;
+            this.B_OpenTrainerInfo.TabIndex = 3;
             this.B_OpenTrainerInfo.Text = "Trainer Info";
             this.B_OpenTrainerInfo.UseVisualStyleBackColor = true;
             this.B_OpenTrainerInfo.Click += new System.EventHandler(this.B_OpenTrainerInfo_Click);
@@ -3958,7 +3957,7 @@
             this.B_OpenBerryField.Location = new System.Drawing.Point(230, 70);
             this.B_OpenBerryField.Name = "B_OpenBerryField";
             this.B_OpenBerryField.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenBerryField.TabIndex = 13;
+            this.B_OpenBerryField.TabIndex = 12;
             this.B_OpenBerryField.Text = "Berry Field";
             this.B_OpenBerryField.UseVisualStyleBackColor = true;
             this.B_OpenBerryField.Click += new System.EventHandler(this.B_OpenBerryField_Click);
@@ -3968,7 +3967,7 @@
             this.B_OpenPokedex.Location = new System.Drawing.Point(155, 70);
             this.B_OpenPokedex.Name = "B_OpenPokedex";
             this.B_OpenPokedex.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenPokedex.TabIndex = 14;
+            this.B_OpenPokedex.TabIndex = 11;
             this.B_OpenPokedex.Text = "Pokédex";
             this.B_OpenPokedex.UseVisualStyleBackColor = true;
             this.B_OpenPokedex.Click += new System.EventHandler(this.B_OpenPokedex_Click);
@@ -3991,7 +3990,7 @@
             this.GB_SAVtools.Location = new System.Drawing.Point(300, 254);
             this.GB_SAVtools.Name = "GB_SAVtools";
             this.GB_SAVtools.Size = new System.Drawing.Size(310, 100);
-            this.GB_SAVtools.TabIndex = 15;
+            this.GB_SAVtools.TabIndex = 100;
             this.GB_SAVtools.TabStop = false;
             // 
             // B_OpenSuperTraining
@@ -4000,7 +3999,7 @@
             this.B_OpenSuperTraining.Location = new System.Drawing.Point(155, 41);
             this.B_OpenSuperTraining.Name = "B_OpenSuperTraining";
             this.B_OpenSuperTraining.Size = new System.Drawing.Size(75, 23);
-            this.B_OpenSuperTraining.TabIndex = 15;
+            this.B_OpenSuperTraining.TabIndex = 7;
             this.B_OpenSuperTraining.Text = "Super Train";
             this.B_OpenSuperTraining.UseVisualStyleBackColor = true;
             this.B_OpenSuperTraining.Click += new System.EventHandler(this.B_OpenSuperTraining_Click);
@@ -4029,6 +4028,17 @@
             this.dragout.MouseLeave += new System.EventHandler(this.dragoutLeave);
             this.dragout.MouseHover += new System.EventHandler(this.dragoutHover);
             // 
+            // L_QR
+            // 
+            this.L_QR.AutoSize = true;
+            this.L_QR.Location = new System.Drawing.Point(217, 5);
+            this.L_QR.Name = "L_QR";
+            this.L_QR.Size = new System.Drawing.Size(26, 13);
+            this.L_QR.TabIndex = 61;
+            this.L_QR.Text = "QR!";
+            this.L_QR.Visible = false;
+            this.L_QR.Click += new System.EventHandler(this.clickQR);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -4036,6 +4046,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(614, 362);
             this.Controls.Add(this.dragout);
+            this.Controls.Add(this.L_QR);
             this.Controls.Add(this.L_SAVINDEX);
             this.Controls.Add(this.GB_SAVtools);
             this.Controls.Add(this.tabBoxMulti);
@@ -4231,7 +4242,6 @@
         private System.Windows.Forms.Label Label_ContestStats;
         private System.Windows.Forms.Button BTN_RandomEVs;
         private System.Windows.Forms.Button BTN_RandomIVs;
-        private System.Windows.Forms.Label Label_HPTYPE;
         private System.Windows.Forms.Label Label_HiddenPowerPrefix;
         private System.Windows.Forms.Label Label_Stats;
         private System.Windows.Forms.Label Label_EVs;
@@ -4447,7 +4457,7 @@
         private System.Windows.Forms.Button B_OpenSuperTraining;
         private System.Windows.Forms.Button B_3DSSETemp;
         private System.Windows.Forms.Panel PAN_Box;
-        public System.Windows.Forms.ComboBox C_BoxSelect;
+        public System.Windows.Forms.ComboBox CB_BoxSelect;
         private System.Windows.Forms.ComboBox DEV_Ability;
         private System.Windows.Forms.CheckBox CHK_HackedStats;
         private System.Windows.Forms.MaskedTextBox MT_Level;
@@ -4461,6 +4471,8 @@
         public System.Windows.Forms.ComboBox CB_Species;
         public System.Windows.Forms.CheckBox CHK_IsEgg;
         private System.Windows.Forms.Button B_SaveBoxBin;
+        private System.Windows.Forms.Label L_QR;
+        private System.Windows.Forms.ComboBox CB_HPType;
     }
 }
 

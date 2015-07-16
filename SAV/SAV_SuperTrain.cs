@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace PKHeX
@@ -15,7 +9,6 @@ namespace PKHeX
         {
             m_parent = frm1;
             savindex = m_parent.savindex;
-            specieslist = Form1.specieslist;
             Array.Copy(m_parent.savefile, sav, 0x100000);
             if (m_parent.savegame_oras) data_offset = 0x25600;
             trba = Form1.trainingbags;
@@ -34,7 +27,6 @@ namespace PKHeX
         }
         Form1 m_parent;
         public byte[] sav = new byte[0x100000];
-        public string[] specieslist;
         public int savindex;
         private int data_offset = 0x24600;
         private string[] trba = {
@@ -49,9 +41,9 @@ namespace PKHeX
                                 "Big-Shot Bag","Double-Up Bag","Team Flare Bag",
                                 "Reset Bag","Soothing Bag",                              
                                };
-        private int offsetVal = 0;
-        private int offsetTime = 0;
-        private int offsetSpec = 0;
+        private int offsetVal;
+        private int offsetTime;
+        private int offsetSpec;
         private void setup()
         {
             dataGridView1.Rows.Clear();
@@ -82,12 +74,14 @@ namespace PKHeX
                 dgvIndex.ReadOnly = true;
                 dgvIndex.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             }
-            DataGridViewComboBoxColumn dgvBag = new DataGridViewComboBoxColumn();
-            dgvBag.DisplayStyle = DataGridViewComboBoxDisplayStyle.Nothing;
+            DataGridViewComboBoxColumn dgvBag = new DataGridViewComboBoxColumn
             {
-                for (int i = 0; i < trba.Length; i++)
-                    if (trba[i].Length > 0)
-                        dgvBag.Items.Add(trba[i]);
+                DisplayStyle = DataGridViewComboBoxDisplayStyle.Nothing
+            };
+            {
+                foreach (string t in trba)
+                    if (t.Length > 0)
+                        dgvBag.Items.Add(t);
 
                 dgvBag.DisplayIndex = 1;
                 dgvBag.Width = 135;
@@ -108,13 +102,11 @@ namespace PKHeX
         {
             try
             {
-                if (e.ColumnIndex == 1)
-                {
-                    ComboBox comboBox = (ComboBox)dataGridView1.EditingControl;
-                    comboBox.DroppedDown = true;
-                }
+                if (e.ColumnIndex != 1) return;
+                ComboBox comboBox = (ComboBox)dataGridView1.EditingControl;
+                comboBox.DroppedDown = true;
             }
-            catch { return; }
+            catch { }
         }
         private void changeListRecordSelection(object sender, EventArgs e)
         {
@@ -146,14 +138,14 @@ namespace PKHeX
                 Array.Resize(ref data, 4);
                 Array.Copy(data, 0, sav, offsetTime + 4 * 30, 4);
             }
-            catch { };
+            catch { }
             try 
             {
                 byte[] data = BitConverter.GetBytes(Single.Parse(TB_Time2.Text));
                 Array.Resize(ref data, 4);
                 Array.Copy(data, 0, sav, offsetTime + 4 * 31, 4);
             }
-            catch { };
+            catch { }
             {
                 int offsetSpec = data_offset + 0x188 + 0x7F000 * savindex;
                 byte[] data = BitConverter.GetBytes(Convert.ToUInt16(CB_S2.SelectedValue.ToString()));
@@ -163,11 +155,11 @@ namespace PKHeX
             Array.Copy(bagarray, 0, sav, data_offset + 0x308 + savindex * 0x7F000, 12);
             Array.Copy(sav, m_parent.savefile, 0x100000);
             m_parent.savedited = true;
-            this.Close();
+            Close();
         }
         private void B_Cancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
         private void changeRecordSpecies(object sender, EventArgs e)
         {
@@ -179,7 +171,7 @@ namespace PKHeX
                 Array.Resize(ref data, 2);
                 Array.Copy(data, 0, sav, offsetSpec + 4 * index, 2);
             }
-            catch { return; }
+            catch { }
         }
         private void changeRecordVal(object sender, EventArgs e)
         {
@@ -191,7 +183,7 @@ namespace PKHeX
                 Array.Resize(ref data, 2);
                 Array.Copy(data, 0, sav, offsetVal + 4 * index, 2);
             }
-            catch { return; }
+            catch { }
         }
         private void changeRecordTime(object sender, EventArgs e)
         {
@@ -203,7 +195,7 @@ namespace PKHeX
                 Array.Resize(ref data, 4);
                 Array.Copy(data, 0, sav, offsetTime + 4 * index, 4);
             }
-            catch { return; }
+            catch { }
         }
     }
 }

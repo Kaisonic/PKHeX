@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace PKHeX
 {
-    public partial class PKX
+    public class PKX
     {
         // C# PKX Function Library
         // No WinForm object related code, only to calculate information.
@@ -19,16 +19,16 @@ namespace PKHeX
         // Data
         internal static uint LCRNG(uint seed)
         {
-            uint a = 0x41C64E6D;
-            uint c = 0x00006073;
+            const uint a = 0x41C64E6D;
+            const uint c = 0x00006073;
 
             seed = (seed * a + c) & 0xFFFFFFFF;
             return seed;
         }
         internal static uint LCRNG(ref uint seed)
         {
-            uint a = 0x41C64E6D;
-            uint c = 0x00006073;
+            const uint a = 0x41C64E6D;
+            const uint c = 0x00006073;
 
             seed = (seed * a + c) & 0xFFFFFFFF;
             return seed;
@@ -188,14 +188,14 @@ namespace PKHeX
 	            10, 10, 10, 20, 25, 10, 20, 30, 25, 20, 20, 15, 20, 15, 20, 20, 10, 10, 10, 10, 
 	            10, 20, 10, 30, 15, 10, 10, 10, 20, 20, 05, 05, 05, 20, 10, 10, 20, 15, 20, 20, 
 	            10, 20, 30, 10, 10, 40, 40, 30, 20, 40, 20, 20, 10, 10, 10, 10, 05, 10, 10, 05, 
-	            05, 
+	            05 
             };
             if (move < 0) { move = 0; }
-            return (byte)movepptable[move];
+            return movepptable[move];
         }
         internal static byte[] getRandomEVs()
         {
-            byte[] evs = new byte[6] { 0xDE, 0xAD, 0xBE, 0xEF, 0xBA, 0xBE, }; // ha ha, just to start off above 510!
+            byte[] evs = { 0xDE, 0xAD, 0xBE, 0xEF, 0xBA, 0xBE }; // ha ha, just to start off above 510!
 
             while (evs.Sum(b => (ushort)b) > 510) // recalculate random EVs...
             {
@@ -219,17 +219,15 @@ namespace PKHeX
 
             PersonalParser.Personal MonData = PersonalGetter.GetPersonal(species);
             int growth = MonData.EXPGrowth;
-            DataTable table = PKX.ExpTable();
+            DataTable table = ExpTable();
 
             // Iterate upwards to find the level above our current level
             int tl = 0; // Initial Level, immediately incremented before loop.
             while ((uint)table.Rows[++tl][growth + 1] <= exp)
             {
-                if (tl == 100)
-                {
-                    exp = getEXP(100, species); // Fix EXP
-                    return 100;
-                }
+                if (tl != 100) continue;
+                exp = getEXP(100, species); // Fix EXP
+                return 100;
                 // After we find the level above ours, we're done.
             }
             return --tl;
@@ -250,7 +248,7 @@ namespace PKHeX
             PersonalParser.Personal MonData = PersonalGetter.GetPersonal(species);
             int growth = MonData.EXPGrowth;
 
-            uint exp = (uint)PKX.ExpTable().Rows[level][growth + 1];
+            uint exp = (uint)ExpTable().Rows[level][growth + 1];
             return exp;
         }
         internal static byte[] getAbilities(int species, int formnum)
@@ -261,14 +259,14 @@ namespace PKHeX
         {
             if (s == "♂" || s == "M")
                 return 0;
-            else if (s == "♀" || s == "F")
+            if (s == "♀" || s == "F")
                 return 1;
-            else return 2;
+            return 2;
         }
         internal static string[] getCountryRegionText(int country, int region, string lang)
         {
             // Get Language we're fetching for
-            int index = Array.IndexOf(new string[] { "ja", "en", "fr", "de", "it", "es", "zh", "ko", }, lang);
+            int index = Array.IndexOf(new[] { "ja", "en", "fr", "de", "it", "es", "zh", "ko"}, lang);
             // Return value storage
             string[] data = new string[2]; // country, region
 
@@ -285,11 +283,9 @@ namespace PKHeX
                     for (int i = 1; i < inputCSV.Length; i++)
                     {
                         string[] countryData = inputCSV[i].Split(',');
-                        if (countryData.Length > 1)
-                        {
-                            indexes[i - 1] = Convert.ToInt32(countryData[0]);
-                            unsortedList[i - 1] = countryData[index + 1];
-                        }
+                        if (countryData.Length <= 1) continue;
+                        indexes[i - 1] = Convert.ToInt32(countryData[0]);
+                        unsortedList[i - 1] = countryData[index + 1];
                     }
 
                     int countrynum = Array.IndexOf(indexes, country);
@@ -311,11 +307,9 @@ namespace PKHeX
                     for (int i = 1; i < inputCSV.Length; i++)
                     {
                         string[] countryData = inputCSV[i].Split(',');
-                        if (countryData.Length > 1)
-                        {
-                            indexes[i - 1] = Convert.ToInt32(countryData[0]);
-                            unsortedList[i - 1] = countryData[index + 1];
-                        }
+                        if (countryData.Length <= 1) continue;
+                        indexes[i - 1] = Convert.ToInt32(countryData[0]);
+                        unsortedList[i - 1] = countryData[index + 1];
                     }
 
                     int regionnum = Array.IndexOf(indexes, region);
@@ -327,39 +321,27 @@ namespace PKHeX
         }
         internal static string getLocation(bool eggmet, int gameorigin, int locval)
         {
-            string loctext = "";
             if (gameorigin < 13 && gameorigin > 6 && eggmet)
             {
-                if (locval < 2000)
-                    loctext = Form1.metHGSS_00000[locval];
-                else if (locval < 3000)
-                    loctext = Form1.metHGSS_02000[locval % 2000];
-                else
-                    loctext = Form1.metHGSS_03000[locval % 3000];
+                if (locval < 2000) return Form1.metHGSS_00000[locval];
+                if (locval < 3000) return Form1.metHGSS_02000[locval % 2000];
+                                   return Form1.metHGSS_03000[locval % 3000];
             }
-            else if (gameorigin < 24)
+            if (gameorigin < 24)
             {
-                if (locval < 30000)
-                    loctext = Form1.metBW2_00000[locval];
-                else if (locval < 40000)
-                    loctext = Form1.metBW2_30000[locval % 10000 - 1];
-                else if (locval < 60000)
-                    loctext = Form1.metBW2_40000[locval % 10000 - 1];
-                else
-                    loctext = Form1.metBW2_60000[locval % 10000 - 1];
+                if (locval < 30000) return Form1.metBW2_00000[locval];
+                if (locval < 40000) return Form1.metBW2_30000[locval % 10000 - 1];
+                if (locval < 60000) return Form1.metBW2_40000[locval % 10000 - 1];
+                                    return Form1.metBW2_60000[locval % 10000 - 1];
             }
-            else if (gameorigin > 23)
+            if (gameorigin > 23)
             {
-                if (locval < 30000)
-                    loctext = Form1.metXY_00000[locval];
-                else if (locval < 40000)
-                    loctext = Form1.metXY_30000[locval % 10000 - 1];
-                else if (locval < 60000)
-                    loctext = Form1.metXY_40000[locval % 10000 - 1];
-                else
-                    loctext = Form1.metXY_60000[locval % 10000 - 1];
+                if (locval < 30000) return Form1.metXY_00000[locval];
+                if (locval < 40000) return Form1.metXY_30000[locval % 10000 - 1];
+                if (locval < 60000) return Form1.metXY_40000[locval % 10000 - 1];
+                                    return Form1.metXY_60000[locval % 10000 - 1];
             }
-            return loctext;
+            return null; // Shouldn't happen.
         }
         internal static ushort[] getStats(int species, int level, int nature, int form,
                                         int HP_EV, int ATK_EV, int DEF_EV, int SPA_EV, int SPD_EV, int SPE_EV,
@@ -385,17 +367,15 @@ namespace PKHeX
             // Account for nature
             int incr = nature / 5 + 1;
             int decr = nature % 5 + 1;
-            if (incr != decr)
-            {
-                stats[incr] *= 11; stats[incr] /= 10;
-                stats[decr] *= 9; stats[decr] /= 10;
-            }
+            if (incr == decr) return stats; // if neutral return stats without mod
+            stats[incr] *= 11; stats[incr] /= 10;
+            stats[decr] *= 9; stats[decr] /= 10;
 
             // Return Result
             return stats;
         }
 
-        // Manipulation
+        // PKX Manipulation
         internal static byte[] shuffleArray(byte[] pkx, uint sv)
         {
             byte[] ekx = new byte[260];
@@ -404,13 +384,13 @@ namespace PKHeX
             // Now to shuffle the blocks
 
             // Define Shuffle Order Structure
-            byte[] aloc = new byte[] { 0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 2, 3, 1, 1, 2, 3, 2, 3, 1, 1, 2, 3, 2, 3 };
-            byte[] bloc = new byte[] { 1, 1, 2, 3, 2, 3, 0, 0, 0, 0, 0, 0, 2, 3, 1, 1, 3, 2, 2, 3, 1, 1, 3, 2 };
-            byte[] cloc = new byte[] { 2, 3, 1, 1, 3, 2, 2, 3, 1, 1, 3, 2, 0, 0, 0, 0, 0, 0, 3, 2, 3, 2, 1, 1 };
-            byte[] dloc = new byte[] { 3, 2, 3, 2, 1, 1, 3, 2, 3, 2, 1, 1, 3, 2, 3, 2, 1, 1, 0, 0, 0, 0, 0, 0 };
+            byte[] aloc = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 2, 3, 1, 1, 2, 3, 2, 3, 1, 1, 2, 3, 2, 3 };
+            byte[] bloc = { 1, 1, 2, 3, 2, 3, 0, 0, 0, 0, 0, 0, 2, 3, 1, 1, 3, 2, 2, 3, 1, 1, 3, 2 };
+            byte[] cloc = { 2, 3, 1, 1, 3, 2, 2, 3, 1, 1, 3, 2, 0, 0, 0, 0, 0, 0, 3, 2, 3, 2, 1, 1 };
+            byte[] dloc = { 3, 2, 3, 2, 1, 1, 3, 2, 3, 2, 1, 1, 3, 2, 3, 2, 1, 1, 0, 0, 0, 0, 0, 0 };
 
             // Get Shuffle Order
-            byte[] shlog = new byte[] { aloc[sv], bloc[sv], cloc[sv], dloc[sv] };
+            byte[] shlog = { aloc[sv], bloc[sv], cloc[sv], dloc[sv] };
 
             // UnShuffle Away!
             for (int b = 0; b < 4; b++)
@@ -433,16 +413,16 @@ namespace PKHeX
 
             // Decrypt Blocks with RNG Seed
             for (int i = 8; i < 232; i += 2)
-                Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(pkx, i) ^ (PKX.LCRNG(ref seed) >> 16))), 0, pkx, i, 2);
+                Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(pkx, i) ^ (LCRNG(ref seed) >> 16))), 0, pkx, i, 2);
 
             // Deshuffle
             pkx = shuffleArray(pkx, sv);
 
             // Decrypt the Party Stats
             seed = pv;
-            if (pkx.Length > 232)
-                for (int i = 232; i < 260; i += 2)
-                    Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(pkx, i) ^ (PKX.LCRNG(ref seed) >> 16))), 0, pkx, i, 2);
+            if (pkx.Length <= 232) return pkx;
+            for (int i = 232; i < 260; i += 2)
+                Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(pkx, i) ^ (LCRNG(ref seed) >> 16))), 0, pkx, i, 2);
 
             return pkx;
         }
@@ -462,13 +442,15 @@ namespace PKHeX
             uint seed = pv;
             // Encrypt Blocks with RNG Seed
             for (int i = 8; i < 232; i += 2)
-                Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(ekx, i) ^ (PKX.LCRNG(ref seed) >> 16))), 0, ekx, i, 2);
+                Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(ekx, i) ^ (LCRNG(ref seed) >> 16))), 0, ekx, i, 2);
+
+            // If no party stats, return.
+            if (ekx.Length <= 232) return ekx;
 
             // Encrypt the Party Stats
             seed = pv;
-            if (ekx.Length > 232)
-                for (int i = 232; i < 260; i += 2)
-                    Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(ekx, i) ^ (PKX.LCRNG(ref seed) >> 16))), 0, ekx, i, 2);
+            for (int i = 232; i < 260; i += 2)
+                Array.Copy(BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(ekx, i) ^ (LCRNG(ref seed) >> 16))), 0, ekx, i, 2);
 
             // Done
             return ekx;
@@ -478,7 +460,7 @@ namespace PKHeX
             ushort chk = 0;
             for (int i = 8; i < 232; i += 2) // Loop through the entire PKX
                 chk += BitConverter.ToUInt16(data, i);
-
+            
             return chk;
         }
         internal static bool verifychk(byte[] input)
@@ -491,7 +473,6 @@ namespace PKHeX
 
                 return (checksum == BitConverter.ToUInt16(input, 28));
             }
-            else
             {
                 if (input.Length == 236 || input.Length == 220 || input.Length == 136) // Gen 4/5
                     Array.Resize(ref input, 136);
@@ -518,7 +499,7 @@ namespace PKHeX
         {
             PersonalParser.Personal MonData = PersonalGetter.GetPersonal(species);
             int gt = MonData.GenderRatio;
-            uint pid = (uint)Util.rnd32();
+            uint pid = Util.rnd32();
             if (gt == 255) //Genderless
                 return pid;
             if (gt == 254) //Female Only
@@ -528,11 +509,11 @@ namespace PKHeX
                 uint gv = (pid & 0xFF);
                 if (cg == 2) // Genderless
                     break;  // PID Passes
-                else if ((cg == 1) && (gv <= gt)) // Female
+                if ((cg == 1) && (gv <= gt)) // Female
                     break;  // PID Passes
-                else if ((cg == 0) && (gv > gt))
+                if ((cg == 0) && (gv > gt))
                     break;  // PID Passes
-                pid = (uint)Util.rnd32();
+                pid = Util.rnd32();
             }
             return pid;
         }
@@ -790,18 +771,17 @@ namespace PKHeX
             }
             {
                 int species = BitConverter.ToInt16(pkx, 0x08); // Get Species
-                uint isegg = (BitConverter.ToUInt32(pkx, 0x74) >> 30) & 1;
 
                 int altforms = (pkx[0x1D] >> 3);
                 int gender = (pkx[0x1D] >> 1) & 0x3;
 
                 string file;
                 {
-                    file = "_" + species.ToString();
+                    file = "_" + species;
                     if (altforms > 0) // Alt Form Handling
-                        file = file + "_" + altforms.ToString();
+                        file = file + "_" + altforms;
                     else if ((species == 521) && (gender == 1))   // Unfezant
-                        file = "_" + species.ToString() + "f";
+                        file = "_" + species + "f";
                 }
                 if (species == 0)
                     file = "_0";
@@ -824,8 +804,7 @@ namespace PKHeX
                 {
                     // Has Item
                     int item = mhelditem;
-                    Image itemimg = (Image)Properties.Resources.ResourceManager.GetObject("item_" + item.ToString());
-                    if (itemimg == null) itemimg = Properties.Resources.helditem;
+                    Image itemimg = (Image)Properties.Resources.ResourceManager.GetObject("item_" + item) ?? Properties.Resources.helditem;
                     // Redraw
                     pksprite = Util.LayerImage(pksprite, itemimg, 22 + (15 - itemimg.Width) / 2, 15 + (15 - itemimg.Height), 1);
                 }
@@ -845,9 +824,9 @@ namespace PKHeX
                 mRMove2N = Form1.movelist[meggmove2];
                 mRMove3N = Form1.movelist[meggmove3];
                 mRMove4N = Form1.movelist[meggmove4];
-                mMetLocN = PKX.getLocation(false, mgamevers, mmetloc);
-                mEggLocN = PKX.getLocation(true, mgamevers, meggloc);
-                mLevel = PKX.getLevel(mspecies, ref mexp);
+                mMetLocN = getLocation(false, mgamevers, mmetloc);
+                mEggLocN = getLocation(true, mgamevers, meggloc);
+                mLevel = getLevel(mspecies, ref mexp);
                 mGameN = Form1.gamelist[mgamevers];
                 mBallN = Form1.balllist[mball];
                 motlangN = Form1.gamelanguages[motlang] ?? String.Format("UNK {0}", motlang);
@@ -1004,98 +983,119 @@ namespace PKHeX
                 public string Name;
                 public SaveGame(string GameID)
                 {
-                    if (GameID == "XY")
+                    switch (GameID)
                     {
-                        Name = "XY";
-                        Box = 0x27A00;
-                        TrainerCard = 0x19400;
-                        Party = 0x19600;
-                        BattleBox = 0x09E00;
-                        Daycare = 0x20600;
-                        GTS = 0x1CC00;
-                        Fused = 0x1B400;
-                        SUBE = 0x22C90;
-
-                        Puff = 0x5400;
-                        Item = 0x5800;
-                        Trainer1 = 0x6800;
-                        Trainer2 = 0x9600;
-                        PCLayout = 0x9800;
-                        Wondercard = 0x21000;
-                        BerryField = 0x20C00;
-                        OPower = 0x1BE00;
-                        EventFlag = 0x19E00;
-                        PokeDex = 0x1A400;
-
-                        HoF = 0x1E800;
-                        JPEG = 0x5C600;
-                        PSS = 0x0A400;
-                    }
-                    else if (GameID == "ORAS")
-                    {
-                        // Temp
-                        Name = "ORAS";
-                        Box = 0x38400;      // Confirmed
-                        TrainerCard = 0x19400; // Confirmed
-                        Party = 0x19600;    // Confirmed
-                        BattleBox = 0x09E00;// Confirmed
-                        Daycare = 0x21000; // Confirmed (thanks Rei)
-                        GTS = 0x1D600; // Confirmed
-                        Fused = 0x1BE00; // Confirmed
-                        SUBE = 0x22C90; // ****not in use, not updating?****
-
-                        Puff = 0x5400; // Confirmed
-                        Item = 0x5800; // Confirmed
-                        Trainer1 = 0x6800; // Confirmed
-                        Trainer2 = 0x9600; // Confirmed
-                        PCLayout = 0x9800; // Confirmed
-                        Wondercard = 0x22000; // Confirmed
-                        BerryField = 0x20C00; // ****changed****
-                        OPower = 0x1BE00;
-                        EventFlag = 0x19E00; // Confirmed
-                        PokeDex = 0x1A400;
-
-                        HoF = 0x1F200; // Confirmed
-                        JPEG = 0x6D000; // Confirmed
-                        PSS = 0x0A400; // Confirmed (thanks Rei)
-                    }
-                    else
-                    {
-                        // Copied...
-                        Name = "Unknown";
-                        Box = 0x27A00;
-                        TrainerCard = 0x19400;
-                        Party = 0x19600;
-                        BattleBox = 0x09E00;
-                        Daycare = 0x20600;
-                        GTS = 0x1CC00;
-                        Fused = 0x1B400;
-                        SUBE = 0x22C90;
-
-                        Puff = 0x5400;
-                        Item = 0x5800;
-                        Trainer1 = 0x6800;
-                        Trainer2 = 0x9600;
-                        PCLayout = 0x9800;
-                        Wondercard = 0x21000;
-                        BerryField = 0x20C00;
-                        OPower = 0x1BE00;
-                        EventFlag = 0x19E00;
-                        PokeDex = 0x1A400;
-
-                        HoF = 0x1E800;
-                        JPEG = 0x5C600;
-                        PSS = 0x0A400;
+                        case "XY":
+                            Name = "XY";
+                            Box = 0x27A00;
+                            TrainerCard = 0x19400;
+                            Party = 0x19600;
+                            BattleBox = 0x09E00;
+                            Daycare = 0x20600;
+                            GTS = 0x1CC00;
+                            Fused = 0x1B400;
+                            SUBE = 0x22C90;
+                            Puff = 0x5400;
+                            Item = 0x5800;
+                            Trainer1 = 0x6800;
+                            Trainer2 = 0x9600;
+                            PCLayout = 0x9800;
+                            Wondercard = 0x21000;
+                            BerryField = 0x20C00;
+                            OPower = 0x1BE00;
+                            EventFlag = 0x19E00;
+                            PokeDex = 0x1A400;
+                            HoF = 0x1E800;
+                            JPEG = 0x5C600;
+                            PSS = 0x0A400;
+                            break;
+                        case "ORAS":
+                            Name = "ORAS";
+                            Box = 0x38400;      // Confirmed
+                            TrainerCard = 0x19400; // Confirmed
+                            Party = 0x19600;    // Confirmed
+                            BattleBox = 0x09E00;// Confirmed
+                            Daycare = 0x21000; // Confirmed (thanks Rei)
+                            GTS = 0x1D600; // Confirmed
+                            Fused = 0x1BE00; // Confirmed
+                            SUBE = 0x22C90; // ****not in use, not updating?****
+                            Puff = 0x5400; // Confirmed
+                            Item = 0x5800; // Confirmed
+                            Trainer1 = 0x6800; // Confirmed
+                            Trainer2 = 0x9600; // Confirmed
+                            PCLayout = 0x9800; // Confirmed
+                            Wondercard = 0x22000; // Confirmed
+                            BerryField = 0x20C00; // ****changed****
+                            OPower = 0x1BE00;
+                            EventFlag = 0x19E00; // Confirmed
+                            PokeDex = 0x1A400;
+                            HoF = 0x1F200; // Confirmed
+                            JPEG = 0x6D000; // Confirmed
+                            PSS = 0x0A400; // Confirmed (thanks Rei)
+                            break;
+                        default:
+                            Name = "Unknown";
+                            Box = 0x27A00;
+                            TrainerCard = 0x19400;
+                            Party = 0x19600;
+                            BattleBox = 0x09E00;
+                            Daycare = 0x20600;
+                            GTS = 0x1CC00;
+                            Fused = 0x1B400;
+                            SUBE = 0x22C90;
+                            Puff = 0x5400;
+                            Item = 0x5800;
+                            Trainer1 = 0x6800;
+                            Trainer2 = 0x9600;
+                            PCLayout = 0x9800;
+                            Wondercard = 0x21000;
+                            BerryField = 0x20C00;
+                            OPower = 0x1BE00;
+                            EventFlag = 0x19E00;
+                            PokeDex = 0x1A400;
+                            HoF = 0x1E800;
+                            JPEG = 0x5C600;
+                            PSS = 0x0A400;
+                            break;
                     }
                 }
             }
         }
         #endregion
 
-        // Save File Related
+        internal static string[] getPKXSummary(PKX data)
+        {
+            string[] response = new string[3];
+            // Summarize
+            string filename = data.Nickname;
+            if (filename != data.Species)
+                filename += " (" + data.Species + ")";
+            response[0] = String.Format("{0} [{4}] lv{3} @ {1} -- {2}", filename, data.HeldItem, data.Nature, data.Level, data.Ability);
+            response[1] = String.Format("{0} / {1} / {2} / {3}", data.Move1, data.Move2, data.Move3, data.Move4);
+            response[2] = String.Format(
+                "IVs:{0}{1}{2}{3}{4}{5}"
+                + Environment.NewLine + Environment.NewLine +
+                "EVs:{6}{7}{8}{9}{10}{11}",
+                Environment.NewLine + data.HP_IV.ToString("00"),
+                Environment.NewLine + data.ATK_IV.ToString("00"),
+                Environment.NewLine + data.DEF_IV.ToString("00"),
+                Environment.NewLine + data.SPA_IV.ToString("00"),
+                Environment.NewLine + data.SPD_IV.ToString("00"),
+                Environment.NewLine + data.SPE_IV.ToString("00"),
+                Environment.NewLine + data.HP_EV.ToString("00"),
+                Environment.NewLine + data.ATK_EV.ToString("00"),
+                Environment.NewLine + data.DEF_EV.ToString("00"),
+                Environment.NewLine + data.SPA_EV.ToString("00"),
+                Environment.NewLine + data.SPD_EV.ToString("00"),
+                Environment.NewLine + data.SPE_EV.ToString("00"));
+
+            return response;
+        }
+
+        // SAV Manipulation
         internal static int detectSAVIndex(byte[] data, ref int savindex)
         {
-            SHA256 mySHA256 = SHA256Managed.Create();
+            SHA256 mySHA256 = SHA256.Create();
             {
                 byte[] difihash1 = new byte[0x12C];
                 byte[] difihash2 = new byte[0x12C];
@@ -1121,19 +1121,18 @@ namespace PKHeX
                     savindex = 2;
                 }
             }
-            if ((data[0x168] ^ 1) != savindex && savindex != 2)
-            {
-                Console.WriteLine("ERROR: ACTIVE BLOCK MISMATCH");
-                savindex = 2;
-            }
+            if ((data[0x168] ^ 1) == savindex || savindex == 2) // success
+                return savindex;
+            Console.WriteLine("ERROR: ACTIVE BLOCK MISMATCH");
+            savindex = 2;
             return savindex;
         }
         internal static ushort ccitt16(byte[] data)
         {
             ushort crc = 0xFFFF;
-            for (int i = 0; i < data.Length; i++)
+            foreach (byte t in data)
             {
-                crc ^= (ushort)(data[i] << 8);
+                crc ^= (ushort)(t << 8);
                 for (int j = 0; j < 8; j++)
                 {
                     if ((crc & 0x8000) > 0)
@@ -1144,6 +1143,525 @@ namespace PKHeX
             }
             return crc;
         }
+        internal static string verifyG6CHK(byte[] savefile, bool oras, int savegame, ref int[] ctr)
+        {
+            string rv = "";
+            int invalid = 0;
+            // Prepare Region Loops
+            int[] start = (oras) 
+                ? new [] { 0x05400, 0x05800, 0x06400, 0x06600, 0x06800, 0x06A00, 0x06C00, 0x06E00, 0x07000, 0x07200, 0x07400, 0x09600, 0x09800, 0x09E00, 0x0A400, 0x0F400, 0x14400, 0x19400, 0x19600, 0x19E00, 0x1A400, 0x1B600, 0x1BE00, 0x1C000, 0x1C200, 0x1C800, 0x1CA00, 0x1CE00, 0x1D600, 0x1D800, 0x1DA00, 0x1DC00, 0x1DE00, 0x1E000, 0x1E800, 0x1EE00, 0x1F200, 0x20E00, 0x21000, 0x21400, 0x21800, 0x22000, 0x23C00, 0x24000, 0x24800, 0x24C00, 0x25600, 0x25A00, 0x26200, 0x27000, 0x27200, 0x27400, 0x28200, 0x28A00, 0x28E00, 0x30A00, 0x38400, 0x6D000, }
+                : new [] { 0x05400, 0x05800, 0x06400, 0x06600, 0x06800, 0x06A00, 0x06C00, 0x06E00, 0x07000, 0x07200, 0x07400, 0x09600, 0x09800, 0x09E00, 0x0A400, 0x0F400, 0x14400, 0x19400, 0x19600, 0x19E00, 0x1A400, 0x1AC00, 0x1B400, 0x1B600, 0x1B800, 0x1BE00, 0x1C000, 0x1C400, 0x1CC00, 0x1CE00, 0x1D000, 0x1D200, 0x1D400, 0x1D600, 0x1DE00, 0x1E400, 0x1E800, 0x20400, 0x20600, 0x20800, 0x20C00, 0x21000, 0x22C00, 0x23000, 0x23800, 0x23C00, 0x24600, 0x24A00, 0x25200, 0x26000, 0x26200, 0x26400, 0x27200, 0x27A00, 0x5C600, };
+            int[] length = (oras) 
+                ? new [] { 0x000002C8, 0x00000B90, 0x0000002C, 0x00000038, 0x00000150, 0x00000004, 0x00000008, 0x000001C0, 0x000000BE, 0x00000024, 0x00002100, 0x00000130, 0x00000440, 0x00000574, 0x00004E28, 0x00004E28, 0x00004E28, 0x00000170, 0x0000061C, 0x00000504, 0x000011CC, 0x00000644, 0x00000104, 0x00000004, 0x00000420, 0x00000064, 0x000003F0, 0x0000070C, 0x00000180, 0x00000004, 0x0000000C, 0x00000048, 0x00000054, 0x00000644, 0x000005C8, 0x000002F8, 0x00001B40, 0x000001F4, 0x000003E0, 0x00000216, 0x00000640, 0x00001A90, 0x00000400, 0x00000618, 0x0000025C, 0x00000834, 0x00000318, 0x000007D0, 0x00000C48, 0x00000078, 0x00000200, 0x00000C84, 0x00000628, 0x00000400, 0x00007AD0, 0x000078B0, 0x00034AD0, 0x0000E058, }
+                : new [] { 0x000002C8, 0x00000B88, 0x0000002C, 0x00000038, 0x00000150, 0x00000004, 0x00000008, 0x000001C0, 0x000000BE, 0x00000024, 0x00002100, 0x00000140, 0x00000440, 0x00000574, 0x00004E28, 0x00004E28, 0x00004E28, 0x00000170, 0x0000061C, 0x00000504, 0x000006A0, 0x00000644, 0x00000104, 0x00000004, 0x00000420, 0x00000064, 0x000003F0, 0x0000070C, 0x00000180, 0x00000004, 0x0000000C, 0x00000048, 0x00000054, 0x00000644, 0x000005C8, 0x000002F8, 0x00001B40, 0x000001F4, 0x000001F0, 0x00000216, 0x00000390, 0x00001A90, 0x00000308, 0x00000618, 0x0000025C, 0x00000834, 0x00000318, 0x000007D0, 0x00000C48, 0x00000078, 0x00000200, 0x00000C84, 0x00000628, 0x00034AD0, 0x0000E058, };
+            int csoff = oras ? 0x7B21A : 0x6A81A;
+            if (savegame == 1) // Offset by 0x7F000
+            {
+                start = Array.ConvertAll(start, x => x + 0x7F000);
+                csoff += 0x7F000;
+            }
+            // Calculate checksums and spit out result.
+            for (int i = 0; i < length.Length; i++)
+            {
+                byte[] array = savefile.Skip(start[i]).Take(length[i]).ToArray();
+                ushort checksum = ccitt16(array);
+                ushort actualsum = BitConverter.ToUInt16(savefile, csoff + i*0x8);
+                if (checksum == actualsum) continue;
+
+                invalid++;
+                rv += String.Format("Invalid: {0} @ Region {1}", i.ToString("X2"), start[i].ToString("X5") + Environment.NewLine);
+            }
+            // Return Outputs
+            rv += String.Format("SAV{2}: {0}/{1}", (start.Length - invalid), start.Length + Environment.NewLine, savegame + 1);
+            ctr[0] += invalid;
+            ctr[1] += length.Length - 1;
+            return rv;
+        }
+        internal static string verifyG6SHA(byte[] savefile, bool oras)
+        {
+            string rv = "";
+            int invalid1 = 0;
+            // Verify Hashes
+            #region hash table data
+            uint[] hashtabledata = {
+                                    0x2020,	    0x203F,	    0x2000,	0x200,
+                                    0x2040,	    0x2FFF,	    0x2020,	0x1000,
+                                    0x3000,	    0x3FFF,	    0x2040,	0x1000,
+                                    0x4000,	    0x4FFF,	    0x2060,	0x1000,
+                                    0x5000,	    0x5FFF,	    0x2080,	0x1000,
+                                    0x6000,	    0x6FFF,	    0x20A0,	0x1000,
+                                    0x7000,	    0x7FFF,	    0x20C0,	0x1000,
+                                    0x8000,	    0x8FFF,	    0x20E0,	0x1000,
+                                    0x9000,	    0x9FFF,	    0x2100,	0x1000,
+                                    0xA000,	    0xAFFF,	    0x2120,	0x1000,
+                                    0xB000,	    0xBFFF,	    0x2140,	0x1000,
+                                    0xC000,	    0xCFFF,	    0x2160,	0x1000,
+                                    0xD000,	    0xDFFF,	    0x2180,	0x1000,
+                                    0xE000,	    0xEFFF,	    0x21A0,	0x1000,
+                                    0xF000,	    0xFFFF,	    0x21C0,	0x1000,
+                                    0x10000,	0x10FFF,	0x21E0,	0x1000,
+                                    0x11000,	0x11FFF,	0x2200,	0x1000,
+                                    0x12000,	0x12FFF,	0x2220,	0x1000,
+                                    0x13000,	0x13FFF,	0x2240,	0x1000,
+                                    0x14000,	0x14FFF,	0x2260,	0x1000,
+                                    0x15000,	0x15FFF,	0x2280,	0x1000,
+                                    0x16000,	0x16FFF,	0x22A0,	0x1000,
+                                    0x17000,	0x17FFF,	0x22C0,	0x1000,
+                                    0x18000,	0x18FFF,	0x22E0,	0x1000,
+                                    0x19000,	0x19FFF,	0x2300,	0x1000,
+                                    0x1A000,	0x1AFFF,	0x2320,	0x1000,
+                                    0x1B000,	0x1BFFF,	0x2340,	0x1000,
+                                    0x1C000,	0x1CFFF,	0x2360,	0x1000,
+                                    0x1D000,	0x1DFFF,	0x2380,	0x1000,
+                                    0x1E000,	0x1EFFF,	0x23A0,	0x1000,
+                                    0x1F000,	0x1FFFF,	0x23C0,	0x1000,
+                                    0x20000,	0x20FFF,	0x23E0,	0x1000,
+                                    0x21000,	0x21FFF,	0x2400,	0x1000,
+                                    0x22000,	0x22FFF,	0x2420,	0x1000,
+                                    0x23000,	0x23FFF,	0x2440,	0x1000,
+                                    0x24000,	0x24FFF,	0x2460,	0x1000,
+                                    0x25000,	0x25FFF,	0x2480,	0x1000,
+                                    0x26000,	0x26FFF,	0x24A0,	0x1000,
+                                    0x27000,	0x27FFF,	0x24C0,	0x1000,
+                                    0x28000,	0x28FFF,	0x24E0,	0x1000,
+                                    0x29000,	0x29FFF,	0x2500,	0x1000,
+                                    0x2A000,	0x2AFFF,	0x2520,	0x1000,
+                                    0x2B000,	0x2BFFF,	0x2540,	0x1000,
+                                    0x2C000,	0x2CFFF,	0x2560,	0x1000,
+                                    0x2D000,	0x2DFFF,	0x2580,	0x1000,
+                                    0x2E000,	0x2EFFF,	0x25A0,	0x1000,
+                                    0x2F000,	0x2FFFF,	0x25C0,	0x1000,
+                                    0x30000,	0x30FFF,	0x25E0,	0x1000,
+                                    0x31000,	0x31FFF,	0x2600,	0x1000,
+                                    0x32000,	0x32FFF,	0x2620,	0x1000,
+                                    0x33000,	0x33FFF,	0x2640,	0x1000,
+                                    0x34000,	0x34FFF,	0x2660,	0x1000,
+                                    0x35000,	0x35FFF,	0x2680,	0x1000,
+                                    0x36000,	0x36FFF,	0x26A0,	0x1000,
+                                    0x37000,	0x37FFF,	0x26C0,	0x1000,
+                                    0x38000,	0x38FFF,	0x26E0,	0x1000,
+                                    0x39000,	0x39FFF,	0x2700,	0x1000,
+                                    0x3A000,	0x3AFFF,	0x2720,	0x1000,
+                                    0x3B000,	0x3BFFF,	0x2740,	0x1000,
+                                    0x3C000,	0x3CFFF,	0x2760,	0x1000,
+                                    0x3D000,	0x3DFFF,	0x2780,	0x1000,
+                                    0x3E000,	0x3EFFF,	0x27A0,	0x1000,
+                                    0x3F000,	0x3FFFF,	0x27C0,	0x1000,
+                                    0x40000,	0x40FFF,	0x27E0,	0x1000,
+                                    0x41000,	0x41FFF,	0x2800,	0x1000,
+                                    0x42000,	0x42FFF,	0x2820,	0x1000,
+                                    0x43000,	0x43FFF,	0x2840,	0x1000,
+                                    0x44000,	0x44FFF,	0x2860,	0x1000,
+                                    0x45000,	0x45FFF,	0x2880,	0x1000,
+                                    0x46000,	0x46FFF,	0x28A0,	0x1000,
+                                    0x47000,	0x47FFF,	0x28C0,	0x1000,
+                                    0x48000,	0x48FFF,	0x28E0,	0x1000,
+                                    0x49000,	0x49FFF,	0x2900,	0x1000,
+                                    0x4A000,	0x4AFFF,	0x2920,	0x1000,
+                                    0x4B000,	0x4BFFF,	0x2940,	0x1000,
+                                    0x4C000,	0x4CFFF,	0x2960,	0x1000,
+                                    0x4D000,	0x4DFFF,	0x2980,	0x1000,
+                                    0x4E000,	0x4EFFF,	0x29A0,	0x1000,
+                                    0x4F000,	0x4FFFF,	0x29C0,	0x1000,
+                                    0x50000,	0x50FFF,	0x29E0,	0x1000,
+                                    0x51000,	0x51FFF,	0x2A00,	0x1000,
+                                    0x52000,	0x52FFF,	0x2A20,	0x1000,
+                                    0x53000,	0x53FFF,	0x2A40,	0x1000,
+                                    0x54000,	0x54FFF,	0x2A60,	0x1000,
+                                    0x55000,	0x55FFF,	0x2A80,	0x1000,
+                                    0x56000,	0x56FFF,	0x2AA0,	0x1000,
+                                    0x57000,	0x57FFF,	0x2AC0,	0x1000,
+                                    0x58000,	0x58FFF,	0x2AE0,	0x1000,
+                                    0x59000,	0x59FFF,	0x2B00,	0x1000,
+                                    0x5A000,	0x5AFFF,	0x2B20,	0x1000,
+                                    0x5B000,	0x5BFFF,	0x2B40,	0x1000,
+                                    0x5C000,	0x5CFFF,	0x2B60,	0x1000,
+                                    0x5D000,	0x5DFFF,	0x2B80,	0x1000,
+                                    0x5E000,	0x5EFFF,	0x2BA0,	0x1000,
+                                    0x5F000,	0x5FFFF,	0x2BC0,	0x1000,
+                                    0x60000,	0x60FFF,	0x2BE0,	0x1000,
+                                    0x61000,	0x61FFF,	0x2C00,	0x1000,
+                                    0x62000,	0x62FFF,	0x2C20,	0x1000,
+                                    0x63000,	0x63FFF,	0x2C40,	0x1000,
+                                    0x64000,	0x64FFF,	0x2C60,	0x1000,
+                                    0x65000,	0x65FFF,	0x2C80,	0x1000,
+                                    0x66000,	0x66FFF,	0x2CA0,	0x1000,
+                                    0x67000,	0x67FFF,	0x2CC0,	0x1000,
+                                    0x68000,	0x68FFF,	0x2CE0,	0x1000,
+                                    0x69000,	0x69FFF,	0x2D00,	0x1000,
+                                    0x6A000,	0x6AFFF,	0x2D20,	0x1000,
+                                 };
+            #endregion
+            SHA256 mySHA256 = SHA256.Create();
+
+            for (int i = 0; i < hashtabledata.Length / 4; i++)
+            {
+                uint start = hashtabledata[0 + 4 * i];
+                uint length = hashtabledata[1 + 4 * i] - hashtabledata[0 + 4 * i];
+                uint offset = hashtabledata[2 + 4 * i];
+                uint blocksize = hashtabledata[3 + 4 * i];
+
+                byte[] zeroarray = new byte[blocksize];
+                Array.Copy(savefile, start, zeroarray, 0, length + 1);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+                byte[] actualhash = new byte[0x20];
+                Array.Copy(savefile, offset, actualhash, 0, 0x20);
+
+                if (hashValue.SequenceEqual(actualhash)) continue;
+                invalid1++;
+                rv += "Invalid: " + hashtabledata[2 + 4 * i].ToString("X5") + " @ " + hashtabledata[0 + 4 * i].ToString("X5") + "-" + hashtabledata[1 + 4 * i].ToString("X5") + Environment.NewLine;
+            }
+            rv += "1st SAV: " + (106 - invalid1) + "/" + 106 + Environment.NewLine;
+
+            // Check The Second Half of Hashes
+            int invalid2 = 0;
+            for (int i = 0; i < hashtabledata.Length; i += 4)
+            {
+                hashtabledata[i + 0] += 0x7F000;
+                hashtabledata[i + 1] += 0x7F000;
+                hashtabledata[i + 2] += 0x7F000;
+            }
+            // Problem with save2 saves is that 0x3000-0x4FFF doesn't use save2 data. Probably different when hashed, but different when stored.
+            for (int i = 2; i < 4; i++)
+            {
+                hashtabledata[i * 4 + 0] -= 0x7F000;
+                hashtabledata[i * 4 + 1] -= 0x7F000;
+            }
+
+            for (int i = 0; i < hashtabledata.Length / 4; i++)
+            {
+                uint start = hashtabledata[0 + 4 * i];
+                uint length = hashtabledata[1 + 4 * i] - hashtabledata[0 + 4 * i];
+                uint offset = hashtabledata[2 + 4 * i];
+                uint blocksize = hashtabledata[3 + 4 * i];
+
+                byte[] zeroarray = new byte[blocksize];
+                Array.Copy(savefile, start, zeroarray, 0, length + 1);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+                byte[] actualhash = new byte[0x20];
+                Array.Copy(savefile, offset, actualhash, 0, 0x20);
+
+                if (hashValue.SequenceEqual(actualhash)) continue;
+                invalid2++;
+                rv += "Invalid: " + hashtabledata[2 + 4 * i].ToString("X5") + " @ " + hashtabledata[0 + 4 * i].ToString("X5") + "-" + hashtabledata[1 + 4 * i].ToString("X5") + Environment.NewLine;
+            }
+            rv += "2nd SAV: " + (106 - invalid2) + "/" + 106 + Environment.NewLine;
+
+            if (invalid1 + invalid2 == (2 * 106))
+                rv = "None of the IVFC hashes are valid." + Environment.NewLine;
+
+            // Check the Upper Level IVFC Hashes
+            {
+                byte[] zeroarray = new byte[0x200];
+                Array.Copy(savefile, 0x2000, zeroarray, 0, 0x20);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+                byte[] actualhash = new byte[0x20];
+                Array.Copy(savefile, 0x43C, actualhash, 0, 0x20);
+                if (!hashValue.SequenceEqual(actualhash))
+                    rv += "Invalid: " + 0x2000.ToString("X5") + " @ " + 0x43C.ToString("X3") + Environment.NewLine;
+            }
+            {
+                byte[] zeroarray = new byte[0x200];
+                Array.Copy(savefile, 0x81000, zeroarray, 0, 0x20);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+                byte[] actualhash = new byte[0x20];
+                Array.Copy(savefile, 0x30C, actualhash, 0, 0x20);
+                if (!hashValue.SequenceEqual(actualhash))
+                    rv += "Invalid: " + 0x81000.ToString("X5") + " @ " + 0x30C.ToString("X3") + Environment.NewLine;
+            }
+            {
+                byte[] difihash1 = new byte[0x12C];
+                byte[] difihash2 = new byte[0x12C];
+                Array.Copy(savefile, 0x330, difihash1, 0, 0x12C);
+                Array.Copy(savefile, 0x200, difihash2, 0, 0x12C);
+                byte[] hashValue1 = mySHA256.ComputeHash(difihash1);
+                byte[] hashValue2 = mySHA256.ComputeHash(difihash2);
+                byte[] actualhash = new byte[0x20];
+                Array.Copy(savefile, 0x16C, actualhash, 0, 0x20);
+                if (hashValue1.SequenceEqual(actualhash))
+                    rv += "Active DIFI partition is Save 1.";
+                else if (hashValue2.SequenceEqual(actualhash))
+                    rv += "Active DIFI partition is Save 2.";
+                else
+                    rv += "ERROR: NO ACTIVE DIFI HASH MATCH";
+            }
+            return rv;
+        }
+        internal static byte[] writeG6CHK(byte[] savefile, bool oras, int savegame)
+        {
+            // Prepare Region Loops
+            int[] start = (oras)
+                ? new[] { 0x05400, 0x05800, 0x06400, 0x06600, 0x06800, 0x06A00, 0x06C00, 0x06E00, 0x07000, 0x07200, 0x07400, 0x09600, 0x09800, 0x09E00, 0x0A400, 0x0F400, 0x14400, 0x19400, 0x19600, 0x19E00, 0x1A400, 0x1B600, 0x1BE00, 0x1C000, 0x1C200, 0x1C800, 0x1CA00, 0x1CE00, 0x1D600, 0x1D800, 0x1DA00, 0x1DC00, 0x1DE00, 0x1E000, 0x1E800, 0x1EE00, 0x1F200, 0x20E00, 0x21000, 0x21400, 0x21800, 0x22000, 0x23C00, 0x24000, 0x24800, 0x24C00, 0x25600, 0x25A00, 0x26200, 0x27000, 0x27200, 0x27400, 0x28200, 0x28A00, 0x28E00, 0x30A00, 0x38400, 0x6D000, }
+                : new[] { 0x05400, 0x05800, 0x06400, 0x06600, 0x06800, 0x06A00, 0x06C00, 0x06E00, 0x07000, 0x07200, 0x07400, 0x09600, 0x09800, 0x09E00, 0x0A400, 0x0F400, 0x14400, 0x19400, 0x19600, 0x19E00, 0x1A400, 0x1AC00, 0x1B400, 0x1B600, 0x1B800, 0x1BE00, 0x1C000, 0x1C400, 0x1CC00, 0x1CE00, 0x1D000, 0x1D200, 0x1D400, 0x1D600, 0x1DE00, 0x1E400, 0x1E800, 0x20400, 0x20600, 0x20800, 0x20C00, 0x21000, 0x22C00, 0x23000, 0x23800, 0x23C00, 0x24600, 0x24A00, 0x25200, 0x26000, 0x26200, 0x26400, 0x27200, 0x27A00, 0x5C600, };
+            int[] length = (oras)
+                ? new[] { 0x000002C8, 0x00000B90, 0x0000002C, 0x00000038, 0x00000150, 0x00000004, 0x00000008, 0x000001C0, 0x000000BE, 0x00000024, 0x00002100, 0x00000130, 0x00000440, 0x00000574, 0x00004E28, 0x00004E28, 0x00004E28, 0x00000170, 0x0000061C, 0x00000504, 0x000011CC, 0x00000644, 0x00000104, 0x00000004, 0x00000420, 0x00000064, 0x000003F0, 0x0000070C, 0x00000180, 0x00000004, 0x0000000C, 0x00000048, 0x00000054, 0x00000644, 0x000005C8, 0x000002F8, 0x00001B40, 0x000001F4, 0x000003E0, 0x00000216, 0x00000640, 0x00001A90, 0x00000400, 0x00000618, 0x0000025C, 0x00000834, 0x00000318, 0x000007D0, 0x00000C48, 0x00000078, 0x00000200, 0x00000C84, 0x00000628, 0x00000400, 0x00007AD0, 0x000078B0, 0x00034AD0, 0x0000E058, }
+                : new[] { 0x000002C8, 0x00000B88, 0x0000002C, 0x00000038, 0x00000150, 0x00000004, 0x00000008, 0x000001C0, 0x000000BE, 0x00000024, 0x00002100, 0x00000140, 0x00000440, 0x00000574, 0x00004E28, 0x00004E28, 0x00004E28, 0x00000170, 0x0000061C, 0x00000504, 0x000006A0, 0x00000644, 0x00000104, 0x00000004, 0x00000420, 0x00000064, 0x000003F0, 0x0000070C, 0x00000180, 0x00000004, 0x0000000C, 0x00000048, 0x00000054, 0x00000644, 0x000005C8, 0x000002F8, 0x00001B40, 0x000001F4, 0x000001F0, 0x00000216, 0x00000390, 0x00001A90, 0x00000308, 0x00000618, 0x0000025C, 0x00000834, 0x00000318, 0x000007D0, 0x00000C48, 0x00000078, 0x00000200, 0x00000C84, 0x00000628, 0x00034AD0, 0x0000E058, };
+            int csoff = oras ? 0x7B21A : 0x6A81A;
+            if (savegame == 1) // Offset by 0x7F000
+            {
+                start = Array.ConvertAll(start, x => x + 0x7F000);
+                csoff += 0x7F000;
+            }
+            // Calculate checksums and write back to save file.
+            for (int i = 0; i < length.Length; i++)
+            {
+                byte[] array = savefile.Skip(start[i]).Take(length[i]).ToArray();
+                Array.Copy(BitConverter.GetBytes(ccitt16(array)), 0, savefile, csoff + i * 8, 2);
+            }
+            return savefile;
+        }
+        internal static byte[] writeG6SHA(byte[] savefile, bool oras, int savegame)
+        {
+            #region hash table data
+            uint[] hashtabledata = {
+                                    0x2020,	    0x203F,	    0x2000,	0x200,
+                                    0x2040,	    0x2FFF,	    0x2020,	0x1000,
+                                    0x3000,	    0x3FFF,	    0x2040,	0x1000,
+                                    0x4000,	    0x4FFF,	    0x2060,	0x1000,
+                                    0x5000,	    0x5FFF,	    0x2080,	0x1000,
+                                    0x6000,	    0x6FFF,	    0x20A0,	0x1000,
+                                    0x7000,	    0x7FFF,	    0x20C0,	0x1000,
+                                    0x8000,	    0x8FFF,	    0x20E0,	0x1000,
+                                    0x9000,	    0x9FFF,	    0x2100,	0x1000,
+                                    0xA000,	    0xAFFF,	    0x2120,	0x1000,
+                                    0xB000,	    0xBFFF,	    0x2140,	0x1000,
+                                    0xC000,	    0xCFFF,	    0x2160,	0x1000,
+                                    0xD000,	    0xDFFF,	    0x2180,	0x1000,
+                                    0xE000,	    0xEFFF,	    0x21A0,	0x1000,
+                                    0xF000,	    0xFFFF,	    0x21C0,	0x1000,
+                                    0x10000,	0x10FFF,	0x21E0,	0x1000,
+                                    0x11000,	0x11FFF,	0x2200,	0x1000,
+                                    0x12000,	0x12FFF,	0x2220,	0x1000,
+                                    0x13000,	0x13FFF,	0x2240,	0x1000,
+                                    0x14000,	0x14FFF,	0x2260,	0x1000,
+                                    0x15000,	0x15FFF,	0x2280,	0x1000,
+                                    0x16000,	0x16FFF,	0x22A0,	0x1000,
+                                    0x17000,	0x17FFF,	0x22C0,	0x1000,
+                                    0x18000,	0x18FFF,	0x22E0,	0x1000,
+                                    0x19000,	0x19FFF,	0x2300,	0x1000,
+                                    0x1A000,	0x1AFFF,	0x2320,	0x1000,
+                                    0x1B000,	0x1BFFF,	0x2340,	0x1000,
+                                    0x1C000,	0x1CFFF,	0x2360,	0x1000,
+                                    0x1D000,	0x1DFFF,	0x2380,	0x1000,
+                                    0x1E000,	0x1EFFF,	0x23A0,	0x1000,
+                                    0x1F000,	0x1FFFF,	0x23C0,	0x1000,
+                                    0x20000,	0x20FFF,	0x23E0,	0x1000,
+                                    0x21000,	0x21FFF,	0x2400,	0x1000,
+                                    0x22000,	0x22FFF,	0x2420,	0x1000,
+                                    0x23000,	0x23FFF,	0x2440,	0x1000,
+                                    0x24000,	0x24FFF,	0x2460,	0x1000,
+                                    0x25000,	0x25FFF,	0x2480,	0x1000,
+                                    0x26000,	0x26FFF,	0x24A0,	0x1000,
+                                    0x27000,	0x27FFF,	0x24C0,	0x1000,
+                                    0x28000,	0x28FFF,	0x24E0,	0x1000,
+                                    0x29000,	0x29FFF,	0x2500,	0x1000,
+                                    0x2A000,	0x2AFFF,	0x2520,	0x1000,
+                                    0x2B000,	0x2BFFF,	0x2540,	0x1000,
+                                    0x2C000,	0x2CFFF,	0x2560,	0x1000,
+                                    0x2D000,	0x2DFFF,	0x2580,	0x1000,
+                                    0x2E000,	0x2EFFF,	0x25A0,	0x1000,
+                                    0x2F000,	0x2FFFF,	0x25C0,	0x1000,
+                                    0x30000,	0x30FFF,	0x25E0,	0x1000,
+                                    0x31000,	0x31FFF,	0x2600,	0x1000,
+                                    0x32000,	0x32FFF,	0x2620,	0x1000,
+                                    0x33000,	0x33FFF,	0x2640,	0x1000,
+                                    0x34000,	0x34FFF,	0x2660,	0x1000,
+                                    0x35000,	0x35FFF,	0x2680,	0x1000,
+                                    0x36000,	0x36FFF,	0x26A0,	0x1000,
+                                    0x37000,	0x37FFF,	0x26C0,	0x1000,
+                                    0x38000,	0x38FFF,	0x26E0,	0x1000,
+                                    0x39000,	0x39FFF,	0x2700,	0x1000,
+                                    0x3A000,	0x3AFFF,	0x2720,	0x1000,
+                                    0x3B000,	0x3BFFF,	0x2740,	0x1000,
+                                    0x3C000,	0x3CFFF,	0x2760,	0x1000,
+                                    0x3D000,	0x3DFFF,	0x2780,	0x1000,
+                                    0x3E000,	0x3EFFF,	0x27A0,	0x1000,
+                                    0x3F000,	0x3FFFF,	0x27C0,	0x1000,
+                                    0x40000,	0x40FFF,	0x27E0,	0x1000,
+                                    0x41000,	0x41FFF,	0x2800,	0x1000,
+                                    0x42000,	0x42FFF,	0x2820,	0x1000,
+                                    0x43000,	0x43FFF,	0x2840,	0x1000,
+                                    0x44000,	0x44FFF,	0x2860,	0x1000,
+                                    0x45000,	0x45FFF,	0x2880,	0x1000,
+                                    0x46000,	0x46FFF,	0x28A0,	0x1000,
+                                    0x47000,	0x47FFF,	0x28C0,	0x1000,
+                                    0x48000,	0x48FFF,	0x28E0,	0x1000,
+                                    0x49000,	0x49FFF,	0x2900,	0x1000,
+                                    0x4A000,	0x4AFFF,	0x2920,	0x1000,
+                                    0x4B000,	0x4BFFF,	0x2940,	0x1000,
+                                    0x4C000,	0x4CFFF,	0x2960,	0x1000,
+                                    0x4D000,	0x4DFFF,	0x2980,	0x1000,
+                                    0x4E000,	0x4EFFF,	0x29A0,	0x1000,
+                                    0x4F000,	0x4FFFF,	0x29C0,	0x1000,
+                                    0x50000,	0x50FFF,	0x29E0,	0x1000,
+                                    0x51000,	0x51FFF,	0x2A00,	0x1000,
+                                    0x52000,	0x52FFF,	0x2A20,	0x1000,
+                                    0x53000,	0x53FFF,	0x2A40,	0x1000,
+                                    0x54000,	0x54FFF,	0x2A60,	0x1000,
+                                    0x55000,	0x55FFF,	0x2A80,	0x1000,
+                                    0x56000,	0x56FFF,	0x2AA0,	0x1000,
+                                    0x57000,	0x57FFF,	0x2AC0,	0x1000,
+                                    0x58000,	0x58FFF,	0x2AE0,	0x1000,
+                                    0x59000,	0x59FFF,	0x2B00,	0x1000,
+                                    0x5A000,	0x5AFFF,	0x2B20,	0x1000,
+                                    0x5B000,	0x5BFFF,	0x2B40,	0x1000,
+                                    0x5C000,	0x5CFFF,	0x2B60,	0x1000,
+                                    0x5D000,	0x5DFFF,	0x2B80,	0x1000,
+                                    0x5E000,	0x5EFFF,	0x2BA0,	0x1000,
+                                    0x5F000,	0x5FFFF,	0x2BC0,	0x1000,
+                                    0x60000,	0x60FFF,	0x2BE0,	0x1000,
+                                    0x61000,	0x61FFF,	0x2C00,	0x1000,
+                                    0x62000,	0x62FFF,	0x2C20,	0x1000,
+                                    0x63000,	0x63FFF,	0x2C40,	0x1000,
+                                    0x64000,	0x64FFF,	0x2C60,	0x1000,
+                                    0x65000,	0x65FFF,	0x2C80,	0x1000,
+                                    0x66000,	0x66FFF,	0x2CA0,	0x1000,
+                                    0x67000,	0x67FFF,	0x2CC0,	0x1000,
+                                    0x68000,	0x68FFF,	0x2CE0,	0x1000,
+                                    0x69000,	0x69FFF,	0x2D00,	0x1000,
+                                    0x6A000,	0x6AFFF,	0x2D20,	0x1000,
+                                 };
+            if (savegame == 1)
+            {
+                for (int i = 0; i < hashtabledata.Length / 4; i++)
+                {
+                    hashtabledata[i * 4 + 0] += 0x7F000;
+                    hashtabledata[i * 4 + 1] += 0x7F000;
+                    hashtabledata[i * 4 + 2] += 0x7F000;
+                }
+
+                // Problem with save2 saves is that 0x3000-0x4FFF doesn't use save2 data. Probably different when hashed, but different when stored.
+                for (int i = 2; i < 4; i++)
+                {
+                    hashtabledata[i * 4 + 0] -= 0x7F000;
+                    hashtabledata[i * 4 + 1] -= 0x7F000;
+                }
+            }
+            #endregion
+            SHA256 mySHA256 = SHA256.Create();
+
+            // Hash for 0x3000 onwards
+            for (int i = 2; i < hashtabledata.Length / 4; i++)
+            {
+                uint start = hashtabledata[0 + 4 * i];
+                uint length = hashtabledata[1 + 4 * i] - hashtabledata[0 + 4 * i];
+                uint offset = hashtabledata[2 + 4 * i];
+                uint blocksize = hashtabledata[3 + 4 * i];
+
+                byte[] zeroarray = new byte[blocksize];
+                Array.Copy(savefile, start, zeroarray, 0, length + 1);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+                Array.Copy(hashValue, 0, savefile, offset, 0x20);
+            }
+            // Fix 2nd Hash
+            {
+                uint start = hashtabledata[0 + 4 * 1];
+                uint length = hashtabledata[1 + 4 * 1] - hashtabledata[0 + 4 * 1];
+                uint offset = hashtabledata[2 + 4 * 1];
+                uint blocksize = hashtabledata[3 + 4 * 1];
+
+                byte[] zeroarray = new byte[blocksize];
+                Array.Copy(savefile, start, zeroarray, 0, length + 1);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+
+                Array.Copy(hashValue, 0, savefile, offset, 0x20);
+            }
+            // Fix 1st Hash
+            {
+                uint start = hashtabledata[0 + 4 * 0];
+                uint length = hashtabledata[1 + 4 * 0] - hashtabledata[0 + 4 * 0];
+                uint offset = hashtabledata[2 + 4 * 0];
+                uint blocksize = hashtabledata[3 + 4 * 0];
+
+                byte[] zeroarray = new byte[blocksize];
+                Array.Copy(savefile, start, zeroarray, 0, length + 1);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+
+                Array.Copy(hashValue, 0, savefile, offset, 0x20);
+            }
+            // Fix IVFC Hash
+            {
+                byte[] zeroarray = new byte[0x200];
+                Array.Copy(savefile, 0x2000 + savegame * 0x7F000, zeroarray, 0, 0x20);
+                byte[] hashValue = mySHA256.ComputeHash(zeroarray);
+
+                Array.Copy(hashValue, 0, savefile, 0x43C - savegame * 0x130, 0x20);
+            }
+            // Fix DISA Hash
+            {
+                byte[] difihash = new byte[0x12C];
+                Array.Copy(savefile, 0x330 - savegame * 0x130, difihash, 0, 0x12C);
+                byte[] hashValue = mySHA256.ComputeHash(difihash);
+
+                Array.Copy(hashValue, 0, savefile, 0x16C, 0x20);
+            }
+            return savefile;
+        }
+
+        // Data Requests
+        internal static Image getSprite(byte[] data)
+        {
+            int species = BitConverter.ToInt16(data, 0x08); // Get Species
+            int form = (data[0x1D] >> 3);
+            int gender = (data[0x1D] >> 1) & 0x3;
+            int item = BitConverter.ToUInt16(data, 0xA);
+            bool isEgg = ((BitConverter.ToUInt32(data, 0x74) >> 30) & 1) == 1;
+            bool isShiny = getIsShiny(BitConverter.ToUInt32(data, 0x18),
+                BitConverter.ToUInt16(data, 0x0C),
+                BitConverter.ToUInt16(data, 0x0E));
+
+            return getSprite(species, form, gender, item, isEgg, isShiny);
+        }
+        internal static Image getSprite(int species, int form, int gender, int item, bool isegg, bool shiny)
+        {
+            string file;
+            if (species == 0)
+            { return (Image)Properties.Resources.ResourceManager.GetObject("_0"); }
+            {
+                file = "_" + species;
+                if (form > 0) // Alt Form Handling
+                    file = file + "_" + form;
+                else if (gender == 1 && (species == 592 || species == 593)) // Frillish & Jellicent
+                    file = file + "_" + gender;
+                else if (gender == 1 && (species == 521 || species == 668)) // Unfezant & Pyroar
+                    file = "_" + species + "f";
+            }
+
+            // Redrawing logic
+            Image baseImage = (Image)Properties.Resources.ResourceManager.GetObject(file);
+            if (baseImage == null)
+            {
+                if (species < 722)
+                {
+                    baseImage = Util.LayerImage(
+                        (Image)Properties.Resources.ResourceManager.GetObject("_" + species),
+                        Properties.Resources.unknown,
+                        0, 0, .5);
+                }
+                else
+                    baseImage = Properties.Resources.unknown;
+            }
+            if (isegg)
+            {
+                // Start with a partially transparent species by layering the species with partial opacity onto a blank image.
+                baseImage = Util.LayerImage((Image)Properties.Resources.ResourceManager.GetObject("_0"), baseImage, 0, 0, 0.33);
+                // Add the egg layer over-top with full opacity.
+                baseImage = Util.LayerImage(baseImage, (Image)Properties.Resources.ResourceManager.GetObject("egg"), 0, 0, 1);
+            }
+            if (shiny)
+            {   
+                // Add shiny star to top left of image.
+                baseImage = Util.LayerImage(baseImage, Properties.Resources.rare_icon, 0, 0, 0.7);
+            }
+            if (item > 0)
+            {
+                Image itemimg = (Image)Properties.Resources.ResourceManager.GetObject("item_" + item) ?? Properties.Resources.helditem;
+                // Redraw
+                baseImage = Util.LayerImage(baseImage, itemimg, 22 + (15 - itemimg.Width) / 2, 15 + (15 - itemimg.Height), 1);
+            }
+            return baseImage;
+        }
+
 
         // Font Related
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
@@ -1172,15 +1690,15 @@ namespace PKHeX
                 AddFontMemResourceEx(fontPtr, (uint)Properties.Resources.PGLDings_NormalRegular.Length, IntPtr.Zero, ref dummy);
                 System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
             }
-            catch { Util.Error("Unable to add ingame font."); return; }
+            catch { Util.Error("Unable to add ingame font."); }
         }
 
         // Personal.dat
         internal static PersonalParser PersonalGetter = new PersonalParser();
         internal class PersonalParser
         {
-            internal byte[] file = (byte[])Properties.Resources.personal;
-            internal int EntryLength = 0xE;
+            internal byte[] file = Properties.Resources.personal;
+            internal const int EntryLength = 0xE;
             internal struct Personal
             {
                 public byte[] BaseStats;
@@ -1211,44 +1729,365 @@ namespace PKHeX
             internal Personal GetPersonal(int species, int formID)
             {
                 Personal data = GetPersonal(species);
-                if (formID > 0 && formID <= data.AltFormCount && data.AltFormCount > 0 && data.FormPointer > 0) // Working with an Alt Forme with a base stat change
-                {
-                    formID--;
-                    data = GetPersonal(721 + formID + data.FormPointer);
-                }
-                return data;
+                if (formID <= 0 || formID > data.AltFormCount || data.AltFormCount <= 0 || data.FormPointer <= 0)
+                    return data;
+
+                // Working with an Alt Forme with a base stat change
+                return GetPersonal(721 + --formID + data.FormPointer);
             }
         }
+        internal static string[] getFormList(int species, string[] t, string[] f, string[] g)
+        {
+            
+            // Mega List            
+            if (Array.IndexOf(new[] 
+                { // XY
+                  003, 009, 065, 094, 115, 127, 130, 142, 181, 212, 214, 229, 248, 257, 282, 303, 306, 308, 310, 354, 359, 380, 381, 445, 448, 460, 
+                  // ORAS
+                  015, 018, 080, 208, 254, 260, 302, 319, 323, 334, 362, 373, 376, 384, 428, 475, 531, 719,
+                }, species) > -1) { // ...
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[723], // Mega
+                    };}
+            // MegaXY List
+            switch (species)
+            {
+                case 6:
+                case 150:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[724], // Mega X
+                        f[725], // Mega Y
+                    };
+                case 025:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[729], // Rockstar
+                        f[730], // Belle
+                        f[731], // Pop
+                        f[732], // PhD
+                        f[733], // Libre
+                        f[734], // Cosplay
+                    };
+                case 201:
+                    return new[]
+                    {
+                        "A", "B", "C", "D", "E",
+                        "F", "G", "H", "I", "J",
+                        "K", "L", "M", "N", "O",
+                        "P", "Q", "R", "S", "T",
+                        "U", "V", "W", "X", "Y",
+                        "Z",
+                        "!", "?",
+                    };
+                case 351:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[789], // Sunny
+                        f[790], // Rainy
+                        f[791], // Snowy
+                    };
+                case 382:
+                case 383:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[800], // Primal
+                    };
+                case 386:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[802], // Attack
+                        f[803], // Defense
+                        f[804], // Speed
+                    };
 
+                case 412:
+                case 413:
+                    return new[]
+                    {
+                        f[412], // Plant
+                        f[805], // Sandy
+                        f[806], // Trash
+                    };
+
+                case 421:
+                    return new[]
+                    {
+                        f[421], // Overcast
+                        f[809], // Sunshine
+                    };
+
+                case 422:
+                case 423:
+                    return new[]
+                    {
+                        f[422], // West
+                        f[811], // East
+                    };
+
+                case 479:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[817], // Heat
+                        f[818], // Wash
+                        f[819], // Frost
+                        f[820], // Fan
+                        f[821], // Mow
+                    };
+
+                case 487:
+                    return new[]
+                    {
+                        f[487], // Altered
+                        f[822], // Origin
+                    };
+
+                case 492:
+                    return new[]
+                    {
+                        f[492], // Land
+                        f[823], // Sky
+                    };
+
+                case 493:
+                    return new[]
+                    {
+                        t[00], // Normal
+                        t[01], // Fighting
+                        t[02], // Flying
+                        t[03], // Poison
+                        t[04], // etc
+                        t[05],
+                        t[06],
+                        t[07],
+                        t[08],
+                        t[09],
+                        t[10],
+                        t[11],
+                        t[12],
+                        t[13],
+                        t[14],
+                        t[15],
+                        t[16],
+                        t[17],
+                    };
+
+                case 550:
+                    return new[]
+                    {
+                        f[550], // Red
+                        f[842], // Blue
+                    };
+
+                case 555:
+                    return new[]
+                    {
+                        f[555], // Standard
+                        f[843], // Zen
+                    };
+
+                case 585:
+                case 586:
+                    return new[]
+                    {
+                        f[585], // Spring
+                        f[844], // Summer
+                        f[845], // Autumn
+                        f[846], // Winter
+                    };
+
+                case 641:
+                case 642:
+                case 645:
+                    return new[]
+                    {
+                        f[641], // Incarnate
+                        f[852], // Therian
+                    };
+
+                case 646:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[853], // White
+                        f[854], // Black
+                    };
+
+                case 647:
+                    return new[]
+                    {
+                        f[647], // Ordinary
+                        f[855], // Resolute
+                    };
+
+                case 648:
+                    return new[]
+                    {
+                        f[648], // Aria
+                        f[856], // Pirouette
+                    };
+
+                case 649:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        t[010], // Douse
+                        t[012], // Shock
+                        t[009], // Burn
+                        t[014], // Chill
+                    };
+
+                case 664:
+                case 665:
+                case 666:
+                    return new[]
+                    {
+                        f[666], // Icy Snow
+                        f[861], // Polar
+                        f[862], // Tundra
+                        f[863], // Continental 
+                        f[864], // Garden
+                        f[865], // Elegant
+                        f[866], // Meadow
+                        f[867], // Modern 
+                        f[868], // Marine
+                        f[869], // Archipelago
+                        f[870], // High-Plains
+                        f[871], // Sandstorm
+                        f[872], // River
+                        f[873], // Monsoon
+                        f[874], // Savannah 
+                        f[875], // Sun
+                        f[876], // Ocean
+                        f[877], // Jungle
+                        f[878], // Fancy
+                        f[879], // Poké Ball
+                    };
+
+                case 669:
+                case 671:
+                    return new[]
+                    {
+                        f[669], // Red
+                        f[884], // Yellow
+                        f[885], // Orange
+                        f[886], // Blue
+                        f[887], // White
+                    };
+
+                case 670:
+                    return new[]
+                    {
+                        f[669], // Red
+                        f[884], // Yellow
+                        f[885], // Orange
+                        f[886], // Blue
+                        f[887], // White
+                        f[888], // Eternal
+                    };
+
+                case 676:
+                    return new[]
+                    {
+                        f[676], // Natural
+                        f[893], // Heart
+                        f[894], // Star
+                        f[895], // Diamond
+                        f[896], // Deputante
+                        f[897], // Matron
+                        f[898], // Dandy
+                        f[899], // La Reine
+                        f[900], // Kabuki 
+                        f[901], // Pharaoh
+                    };
+
+                case 678:
+                    return new[]
+                    {
+                        g[000], // Male
+                        g[001], // Female
+                    };
+
+                case 681:
+                    return new[]
+                    {
+                        f[681], // Shield
+                        f[903], // Blade
+                    };
+
+                case 710:
+                case 711:
+                    return new[]
+                    {
+                        f[904], // Small
+                        f[710], // Average
+                        f[905], // Large
+                        f[906], // Super
+                    };
+
+                case 716:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[910], // Active
+                    };
+
+                case 720:
+                    return new[]
+                    {
+                        t[000], // Normal
+                        f[912], // Unbound
+                    };
+            }
+            return new[] {""};
+        }
+
+        /// <summary>
+        /// Calculate the Hidden Power Type of the entered IVs.
+        /// </summary>
+        /// <param name="ivs">HP/ATK/DEF/SPEED/SPA/SPD</param>
+        /// <returns></returns>
+        internal static int getHPType(int[] ivs)
+        {
+            return (15 * ((ivs[0] & 1) + 2 * (ivs[1] & 1) + 4 * (ivs[2] & 1) + 8 * (ivs[5] & 1) + 16 * (ivs[3] & 1) + 32 * (ivs[4] & 1))) / 63;
+        }
         internal static int[] setHPIVs(int type, int[] ivs)
         {
             for (int i = 0; i < 6; i++)
                 ivs[i] = (ivs[i] & 0x1E) + hpivs[type][i];
             return ivs;
         }
-        internal static string[] hptypes = new string[] { 
+        internal static string[] hptypes = { 
             "Fighting", "Flying", "Poison", "Ground",
             "Rock", "Bug", "Ghost", "Steel", "Fire", "Water",
             "Grass", "Electric", "Psychic", "Ice", "Dragon", "Dark"
         };
-        internal static int[][] hpivs = new int[][] {
-            new int[] { 1, 1, 0, 0, 0, 0 }, // Fighting
-            new int[] { 0, 0, 0, 0, 0, 1 }, // Flying
-            new int[] { 1, 1, 0, 0, 0, 1 }, // Poison
-            new int[] { 1, 1, 1, 0, 0, 1 }, // Ground
-            new int[] { 1, 1, 0, 1, 0, 0 }, // Rock
-            new int[] { 1, 0, 0, 1, 0, 1 }, // Bug
-            new int[] { 1, 1, 0, 1, 0, 1 }, // Ghost
-            new int[] { 1, 1, 1, 1, 0, 1 }, // Steel
-            new int[] { 1, 0, 1, 0, 1, 0 }, // Fire
-            new int[] { 1, 0, 0, 0, 1, 1 }, // Water
-            new int[] { 1, 0, 1, 0, 1, 1 }, // Grass
-            new int[] { 1, 1, 1, 0, 1, 1 }, // Electric
-            new int[] { 1, 0, 1, 1, 1, 0 }, // Psychic
-            new int[] { 1, 0, 0, 1, 1, 1 }, // Ice
-            new int[] { 1, 0, 1, 1, 1, 1 }, // Dragon
-            new int[] { 1, 1, 1, 1, 1, 1 }, // Dark
-            };
+        internal static readonly int[][] hpivs = {
+            new[] { 1, 1, 0, 0, 0, 0 }, // Fighting
+            new[] { 0, 0, 0, 0, 0, 1 }, // Flying
+            new[] { 1, 1, 0, 0, 0, 1 }, // Poison
+            new[] { 1, 1, 1, 0, 0, 1 }, // Ground
+            new[] { 1, 1, 0, 1, 0, 0 }, // Rock
+            new[] { 1, 0, 0, 1, 0, 1 }, // Bug
+            new[] { 1, 0, 1, 1, 0, 1 }, // Ghost
+            new[] { 1, 1, 1, 1, 0, 1 }, // Steel
+            new[] { 1, 0, 1, 0, 1, 0 }, // Fire
+            new[] { 1, 0, 0, 0, 1, 1 }, // Water
+            new[] { 1, 0, 1, 0, 1, 1 }, // Grass
+            new[] { 1, 1, 1, 0, 1, 1 }, // Electric
+            new[] { 1, 0, 1, 1, 1, 0 }, // Psychic
+            new[] { 1, 0, 0, 1, 1, 1 }, // Ice
+            new[] { 1, 0, 1, 1, 1, 1 }, // Dragon
+            new[] { 1, 1, 1, 1, 1, 1 }, // Dark
+        };
         public class Simulator
         {
             public struct Set
@@ -1256,37 +2095,38 @@ namespace PKHeX
                 // Default Set Data
                 public string Nickname;
                 public int Species;
+                public string Form;
                 public string Gender;
                 public int Item;
-                public string Ability;
+                public int Ability;
                 public int Level;
                 public bool Shiny;
-                public int Happiness;
+                public int Friendship;
                 public int Nature;
                 public byte[] EVs;
-                public byte[] IVs;
+                public int[] IVs;
                 public int[] Moves;
 
                 // Parsing Utility
-                private string[] Stats;
-                public Set(string input, string[] species, string[] items, string[] natures, string[] moves, string[] types)
+                public Set(string input, string[] species, string[] items, string[] natures, string[] moves, string[] abilities)
                 {
                     Nickname = null;
-                    Species = 0;
+                    Species = -1;
+                    Form = null;
                     Gender = null;
                     Item = 0;
-                    Ability = null;
+                    Ability = 0;
                     Level = 100;
                     Shiny = false;
-                    Happiness = 255;
+                    Friendship = 255;
                     Nature = 0;
                     EVs = new byte[6];
-                    IVs = new byte[6] { 31, 31, 31, 31, 31, 31 };
+                    IVs = new[] { 31, 31, 31, 31, 31, 31 };
                     Moves = new int[4];
-                    Stats = new string[] { "HP", "Atk", "Def", "SpA", "SpD", "Spe" };
+                    string[] stats =  { "HP", "Atk", "Def", "SpA", "SpD", "Spe" };
 
-                    string[] lines = input.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                    Nickname = null;
+                    string[] lines = input.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+                    for (int i = 0; i < lines.Length; i++) lines[i] = lines[i].Replace("'", "’"); // Sanitize apostrophes
 
                     // Seek for start of set
                     int start = -1;
@@ -1295,67 +2135,129 @@ namespace PKHeX
                     lines = lines.Skip(start).Take(lines.Length - start).ToArray();
 
                     // Abort if no text is found
-                    if (start == -1) { Species = -1; return; }
+                    if (start == -1)
+                    {
+                        // Try to parse the first line if it does not have any item
+                        string ld = lines[0];
+                        // Gender Detection
+                        string last3 = ld.Substring(ld.Length - 3);
+                        if (last3 == "(M)" || last3 == "(F)")
+                        {
+                            Gender = last3.Substring(1, 1);
+                            ld = ld.Substring(0, ld.Length - 3);
+                        }
+                        // Nickname Detection
+                        string spec = ld;
+                        if (spec.Contains("("))
+                        {
+                            int index = spec.LastIndexOf("(", StringComparison.Ordinal);
+                            string n1 = spec.Substring(0, index - 1);
+                            string n2 = spec.Substring(index).Replace("(", "").Replace(")", "").Replace(" ", "");
+
+                            bool inverted = Array.IndexOf(species, n2.Replace(" ", "")) > -1;
+                            spec = inverted ? n2 : n1;
+                            Nickname = inverted ? n1 : n2;
+                        }
+                        Species = Array.IndexOf(species, spec.Replace(" ", ""));
+                        if (
+                            (Species = Array.IndexOf(species, spec)) < 0 // Not an Edge Case
+                            &&
+                            (Species = Array.IndexOf(species, spec.Replace(" ", ""))) < 0 // Has Form
+                            ) 
+                        {
+                            string[] tmp = spec.Split(new[] { "-" }, StringSplitOptions.None);
+                            if (tmp.Length < 2) return;
+                            Species = Array.IndexOf(species, tmp[0].Replace(" ", ""));
+                            Form = tmp[1].Replace(" ", "");
+                        }
+                        if (Species < -1)
+                            return;
+                        else
+                            lines = lines.Skip(1).Take(lines.Length - 1).ToArray();
+                    }
                     int movectr = 0;
                     // Detect relevant data
                     foreach (string line in lines)
                     {
+                        if (line.Length < 2) continue;
                         if (line.Contains("- "))
                         {
                             string moveString = line.Substring(2);
-                            if (moveString.Contains("Hidden Power")) moveString = "Hidden Power";
+                            if (moveString.Contains("Hidden Power"))
+                            {
+                                if (moveString.Length > 13) // Defined Hidden Power
+                                {
+                                    string type = moveString.Remove(0, 13).Replace("[", "").Replace("]", ""); // Trim out excess data
+                                    int hpVal = Array.IndexOf(hptypes, type); // Get HP Type
+                                    if (hpVal >= 0) IVs = setHPIVs(hpVal, IVs); // Get IVs
+                                }
+                                moveString = "Hidden Power";
+                            }
                             Moves[movectr++] = Array.IndexOf(moves, moveString);
                             continue;
                         }
 
-                        string[] brokenline = line.Split(new string[] { ": " }, StringSplitOptions.None);
+                        string[] brokenline = line.Split(new[] { ": " }, StringSplitOptions.None);
                         switch (brokenline[0])
                         {
-                            case "Ability": { Ability = brokenline[1]; break; }
+                            case "Ability": { Ability = Array.IndexOf(abilities, brokenline[1]); break; }
                             case "Level": { Level = Util.ToInt32(brokenline[1]); break; }
                             case "Shiny": { Shiny = (brokenline[1] == "Yes"); break; }
-                            case "Happiness": { Happiness = Util.ToInt32(brokenline[1]); break; }
+                            case "Happiness": { Friendship = Util.ToInt32(brokenline[1]); break; }
                             case "EVs":
                                 {
                                     // Get EV list String
-                                    string[] evlist = lines[1].Split(new string[] { " / ", " " }, StringSplitOptions.None);
+                                    string[] evlist = brokenline[1].Replace("SAtk", "SpA").Replace("SDef", "SpD").Replace("Spd", "Spe").Split(new[] { " / ", " " }, StringSplitOptions.None);
                                     for (int i = 0; i < evlist.Length / 2; i++)
-                                        EVs[Array.IndexOf(Stats, evlist[1 + i * 2])] = (byte)Util.ToInt32(evlist[0 + 2 * i]);
+                                        EVs[Array.IndexOf(stats, evlist[1 + i * 2])] = (byte)Util.ToInt32(evlist[0 + 2 * i]);
                                     break;
                                 }
                             case "IVs":
                                 {
                                     // Get IV list String
-                                    string[] ivlist = lines[1].Split(new string[] { " / ", " " }, StringSplitOptions.None);
+                                    string[] ivlist = brokenline[1].Split(new[] { " / ", " " }, StringSplitOptions.None);
                                     for (int i = 0; i < ivlist.Length / 2; i++)
-                                        IVs[Array.IndexOf(Stats, ivlist[1 + i * 2])] = (byte)Util.ToInt32(ivlist[0 + 2 * i]);
+                                        IVs[Array.IndexOf(stats, ivlist[1 + i * 2])] = (byte)Util.ToInt32(ivlist[0 + 2 * i]);
                                     break;
                                 }
                             default:
                                 {
                                     // Either Nature or Gender ItemSpecies
-                                    if (brokenline.Contains(" @ "))
+                                    if (brokenline[0].Contains(" @ "))
                                     {
-                                        string[] ld = line.Split(new string[] { " @ " }, StringSplitOptions.None);
+                                        string[] ld = line.Split(new[] { " @ " }, StringSplitOptions.None);
                                         Item = Array.IndexOf(items, ld.Last());
                                         // Gender Detection
                                         string last3 = ld[0].Substring(ld[0].Length - 3);
                                         if (last3 == "(M)" || last3 == "(F)")
                                         {
                                             Gender = last3.Substring(1, 1);
-                                            ld[0] = ld[0].Substring(0, ld[ld.Length - 1].Length - 3);
+                                            ld[0] = ld[0].Substring(0, ld[ld.Length - 2].Length - 3);
                                         }
                                         // Nickname Detection
                                         string spec = ld[0];
-                                        if (ld[0].Contains("("))
+                                        if (spec.Contains("("))
                                         {
-                                            int index = ld[0].LastIndexOf("(");
-                                            Nickname = ld[0].Substring(0, ld[0].Length - index);
-                                            spec = ld[0].Substring(index).Replace("(", "").Replace(")", "");
+                                            int index = spec.LastIndexOf("(", StringComparison.Ordinal);
+                                            string n1 = spec.Substring(0, index - 1);
+                                            string n2 = spec.Substring(index).Replace("(", "").Replace(")", "").Replace(" ", "");
+
+                                            bool inverted = Array.IndexOf(species, n2.Replace(" ", "")) > -1;
+                                            spec = inverted ? n2 : n1;
+                                            Nickname = inverted ? n1 : n2;
                                         }
-                                        Species = Array.IndexOf(species, spec);
+                                        if (
+                                            (Species = Array.IndexOf(species, spec)) < 0 // Not an Edge Case
+                                            &&
+                                            (Species = Array.IndexOf(species, spec.Replace(" ", ""))) < 0 // Has Form
+                                            ) 
+                                        {
+                                            string[] tmp = spec.Split(new[] { "-" }, StringSplitOptions.None);
+                                            Species = Array.IndexOf(species, tmp[0].Replace(" ", ""));
+                                            Form = tmp[1].Replace(" ", "");
+                                        }
                                     }
-                                    else if (brokenline.Contains("Nature"))
+                                    else if (brokenline[0].Contains("Nature"))
                                         Nature = Array.IndexOf(natures, line.Split(' ')[0]);
                                     else // Fallback
                                         Species = Array.IndexOf(species, line.Split('(')[0]);

@@ -1,26 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Drawing.Imaging;
 
 namespace PKHeX
 {
     public partial class SAV_Trainer : Form
     {
-        private int TrainerCard = 0x19400;
-        private int Trainer1 = 0x6800;
-        private int Trainer2 = 0x9600;
+        private const int TrainerCard = 0x19400;
+        private const int Trainer1 = 0x6800;
+        private const int Trainer2 = 0x9600;
         private int Maison = 0x205C0;
         private int VivillonForm = 0x9650;
         public SAV_Trainer(Form1 frm1)
         {
             InitializeComponent();
-
+            if (!Form1.unicode)
             try { TB_OTName.Font = PKX.getPKXFont(11); }
             catch (Exception e) { Util.Alert("Font loading failed...", e.ToString()); }
 
@@ -31,8 +27,9 @@ namespace PKHeX
             savshift = savindex * 0x7F000;
             if (m_parent.savegame_oras)
             {
-                psssatoffset = 0x24800; Maison += 0xA00; VivillonForm = 0x9644;
-                this.Width = (int)((float)Width * (float)428 / (float)590);
+                psssatoffset = 0x24800; Maison += 0xA00; 
+                VivillonForm = 0x9644;
+                Width = (int)((float)Width * 428 / 590);
                 CB_Multi.Enabled = true;
                 L_MultiplayerSprite.Enabled = true; // Multiplayer Sprite Label
 
@@ -46,7 +43,7 @@ namespace PKHeX
             getBadges();
             GB_Map.Enabled = !Form1.ramsavloaded;
 
-            statdata = new string[] {
+            statdata = new[] {
                 "0x000",	"0x000", // Steps taken?
                 "0x004",	"0x004", // Minutes Played / Pokemon Encountered?
                 "0x008",	"0x008",
@@ -205,13 +202,13 @@ namespace PKHeX
                 CB_Stats.Items.Add(statdata[2 * i + 1]);
             CB_Stats.SelectedIndex = 0;
         }
-        private string[] statdata = new string[] { };
+        private string[] statdata = { };
         Form1 m_parent;
         public byte[] sav = new byte[0x100000];
         public int savshift;
         public int savindex;
-        public bool editing = false;
-        public byte badgeval = 0;
+        public bool editing;
+        public byte badgeval;
         public ToolTip Tip1 = new ToolTip();
         public ToolTip Tip2 = new ToolTip();
 
@@ -348,7 +345,7 @@ namespace PKHeX
                            };
             if (m_parent.savegame_oras)
             {
-                bma = new Bitmap[] {
+                bma = new[] {
                                    Properties.Resources.badge_01, // ORAS Badges
                                    Properties.Resources.badge_02,  
                                    Properties.Resources.badge_03,   
@@ -364,22 +361,19 @@ namespace PKHeX
 
             for (int i = 0; i < 8; i++)
             {
-                if (!cba[i].Checked)
-                    pba[i].Image = Util.ChangeOpacity(bma[i], 0.1);
-                else
-                    pba[i].Image = Util.ChangeOpacity(bma[i], 1);
+                pba[i].Image = Util.ChangeOpacity(bma[i], !cba[i].Checked ? 0.1 : 1);
             }
         }
         private void getTextBoxes()
         {
-            byte badgeval = sav[Trainer2 + 0xC + savindex * 0x7F000];
+            badgeval = sav[Trainer2 + 0xC + savindex * 0x7F000];
             CheckBox[] cba = { cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, };
             for (int i = 0; i < 8; i++)
-                cba[i].Checked = !((badgeval & (1 << i)) == 0);
+                cba[i].Checked = (badgeval & (1 << i)) != 0;
 
             // Get Data
             string OT_NAME = Encoding.Unicode.GetString(sav, TrainerCard + 0x48 + savshift, 0x1A);
-            string RIV_NAME = Encoding.Unicode.GetString(sav, Trainer2 + 0x10 + savshift, 0x1A);
+            // string RIV_NAME = Encoding.Unicode.GetString(sav, Trainer2 + 0x10 + savshift, 0x1A);
 
             CB_Game.SelectedIndex = sav[TrainerCard + 0x04 + savshift] - 0x18;
             CB_Gender.SelectedIndex = sav[TrainerCard + 0x05 + savshift];
@@ -403,8 +397,8 @@ namespace PKHeX
             TB_OTName.Text = OT_NAME;
             //TB_Rival.Text = RIV_NAME;
 
-            MT_TID.Text = TID.ToString();
-            MT_SID.Text = SID.ToString();
+            MT_TID.Text = TID.ToString("00000");
+            MT_SID.Text = SID.ToString("00000");
             MT_Money.Text = money.ToString();
 
             TB_Saying1.Text = saying1;
@@ -498,8 +492,8 @@ namespace PKHeX
             MT_1403F.Text = sav[TrainerCard + 0x3F + savshift].ToString();
 
             // Vivillon
-            int vivillon = sav[VivillonForm + savshift];
-            CB_Vivillon.SelectedValue = vivillon;
+            byte vivillon = sav[VivillonForm + savshift];
+            CB_Vivillon.SelectedIndex = vivillon;
         }
         private void save()
         {
@@ -557,7 +551,8 @@ namespace PKHeX
 
             // New stuff.
             // Copy Maison Data in
-            MaskedTextBox[] tba = new MaskedTextBox[] {
+            MaskedTextBox[] tba =
+            {
                 TB_MCSN,TB_MCSS,TB_MBSN,TB_MBSS,
                 TB_MCDN,TB_MCDS,TB_MBDN,TB_MBDS,
                 TB_MCTN,TB_MCTS,TB_MBTN,TB_MBTS,
@@ -617,7 +612,7 @@ namespace PKHeX
             sav[TrainerCard + 0x3F + savshift] = Byte.Parse(MT_1403F.Text);
 
             // Vivillon
-            sav[VivillonForm + savshift] = (byte)Util.ToUInt32(CB_Vivillon.SelectedValue.ToString());
+            sav[VivillonForm + savshift] = (byte)CB_Vivillon.SelectedIndex;
         }
 
         private void clickOT(object sender, MouseEventArgs e)
@@ -632,8 +627,8 @@ namespace PKHeX
             uint TID = Util.ToUInt32(MT_TID.Text);
             uint SID = Util.ToUInt32(MT_SID.Text);
             uint tsv = (TID ^ SID) >> 4;
-            Tip1.SetToolTip(this.MT_TID, "TSV: " + tsv.ToString("0000"));
-            Tip2.SetToolTip(this.MT_SID, "TSV: " + tsv.ToString("0000"));
+            Tip1.SetToolTip(MT_TID, "TSV: " + tsv.ToString("0000"));
+            Tip2.SetToolTip(MT_SID, "TSV: " + tsv.ToString("0000"));
         }
 
         private void B_Cancel_Click(object sender, EventArgs e)
@@ -661,6 +656,12 @@ namespace PKHeX
             if (box.Text == "") box.Text = "0";
             if (Util.ToInt32(box.Text) > 255) box.Text = "255";
         }
+        private void changeFFFF(object sender, EventArgs e)
+        {
+            MaskedTextBox box = sender as MaskedTextBox;
+            if (box.Text == "") box.Text = "0";
+            if (Util.ToInt32(box.Text) > 65535) box.Text = "65535";
+        }
         private int psssatoffset = 0x23800;
         private void changeStat(object sender, EventArgs e)
         {
@@ -677,21 +678,21 @@ namespace PKHeX
         }
         private void changeStatVal(object sender, EventArgs e)
         {
-            if (!editing)
-            {
-                int pssoff = psssatoffset + savindex * 0x7F000;
-                string offsetstr = statdata[CB_Stats.SelectedIndex * 2];
-                int offset = (int)new System.ComponentModel.Int32Converter().ConvertFromString(offsetstr);
+            if (editing) return;
 
-                uint val = UInt32.Parse(MT_Stat.Text);
-                byte[] data = BitConverter.GetBytes(val);
-                Array.Resize(ref data, 4);
-                Array.Copy(data, 0, sav, pssoff + offset, 4);
-            }
+            int pssoff = psssatoffset + savindex * 0x7F000;
+            string offsetstr = statdata[CB_Stats.SelectedIndex * 2];
+            int offset = (int)new System.ComponentModel.Int32Converter().ConvertFromString(offsetstr);
+
+            uint val = UInt32.Parse(MT_Stat.Text);
+            byte[] data = BitConverter.GetBytes(val);
+            Array.Resize(ref data, 4);
+            Array.Copy(data, 0, sav, pssoff + offset, 4);
         }
         private void giveAllAccessories(object sender, EventArgs e)
         {
-            byte[] data = new byte[] {
+            byte[] data =
+            {
                 0xFE,0xFF,0xFF,0x7E,0xFF,0xFD,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
                 0xFF,0xEF,0xFF,0xFF,0xFF,0xF9,0xFF,0xFB,0xFF,0xF7,0xFF,0xFF,0x0F,0x00,0x00,0x00,
                 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFE,0xFF,
@@ -711,7 +712,7 @@ namespace PKHeX
         private void toggleBadge(object sender, EventArgs e)
         {
             int val = Convert.ToInt16(((PictureBox)sender).Name.Last().ToString()) - 1;
-            CheckBox[] chka = new CheckBox[] { cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8 };
+            CheckBox[] chka = { cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8 };
             chka[val].Checked = !chka[val].Checked;
         }
 

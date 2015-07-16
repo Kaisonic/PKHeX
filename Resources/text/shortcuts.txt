@@ -1,4 +1,4 @@
-﻿If you are having issues viewing certain symbols: Options -> Toggle Unicode Text.
+﻿If you are having issues viewing certain symbols/text: Options -> Toggle Font.
 
 
 // Main Window
@@ -7,10 +7,14 @@ Hold Control when dragging out the Tab PKM to save as ekx.
 Control Click on a Nickname/OT box to bring up the ingame-special characters.
 
 Control + Click on...
+Species: Import Showdown/Smogon set from Clipboard.
 Randomize IVs: Set all IVs to max.
 Randomize EVs: Set all EVs to 0.
 PP Ups Label: Set all PP Ups to 3.
 Friendship Label: Reset Friendship
+QR! to wrap text around QR code.
+
+Alt click QR! to load ekx data from a QR url loaded to your clipboard.
 
 Click on the OT label to set relevant details to that of the save file.
 
@@ -43,3 +47,5 @@ POKEPUFF:
  - Control Click the All Button to give un-exceptional Pokepuffs.
  - Control Click the Sort Button to sort in reverse.
 
+WONDERCARD:
+ - Alt-Click QR to import from QR image.

@@ -14680,7 +14680,7 @@ namespace PKHeX.Properties {
         ///! For the Menu Bar, separate the DropDown Item names with &apos; ; &apos;
         ///!
         ///! -----------------------------------------------------
-        ///- DO NO [rest of string was truncated]&quot;;.
+        ///- DO NOT CHANGE THIS [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string lang_de {
             get {
@@ -14702,7 +14702,7 @@ namespace PKHeX.Properties {
         ///! For the Menu Bar, separate the DropDown Item names with &apos; ; &apos;
         ///!
         ///! -----------------------------------------------------
-        ///- DO NO [rest of string was truncated]&quot;;.
+        ///- DO NOT CHANGE THIS [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string lang_en {
             get {
@@ -14724,7 +14724,7 @@ namespace PKHeX.Properties {
         ///! For the Menu Bar, separate the DropDown Item names with &apos; ; &apos;
         ///!
         ///! -----------------------------------------------------
-        ///- DO NO [rest of string was truncated]&quot;;.
+        ///- DO NOT CHANGE THIS [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string lang_es {
             get {
@@ -14746,7 +14746,7 @@ namespace PKHeX.Properties {
         ///! For the Menu Bar, separate the DropDown Item names with &apos; ; &apos;
         ///!
         ///! -----------------------------------------------------
-        ///- DO NO [rest of string was truncated]&quot;;.
+        ///- DO NOT CHANGE THIS [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string lang_fr {
             get {
@@ -14768,11 +14768,33 @@ namespace PKHeX.Properties {
         ///! For the Menu Bar, separate the DropDown Item names with &apos; ; &apos;
         ///!
         ///! -----------------------------------------------------
-        ///- DO NO [rest of string was truncated]&quot;;.
+        ///- DO NOT CHANGE THIS [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string lang_ja {
             get {
                 return ResourceManager.GetString("lang_ja", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ! PKHeX Interface Customization File
+        ///! Languages: Save this file accordingly and put it in the same folder as PKHeX&apos;s executable.
+        ///! lang_en.txt = English
+        ///! lang_jp.txt = Japanese
+        ///! lang_fr.txt = French
+        ///! lang_de.txt = German
+        ///! lang_es.txt = Spanish
+        ///! lang_it.txt = Italian
+        ///! lang_ko.txt = Korean
+        ///! lang_pt.txt = Portuguese
+        ///! Make sure that each edit has a &apos; = &apos; between Control name and new Text!
+        ///! For the Menu Bar, separate the DropDown Item names with &apos; ; &apos;
+        ///!
+        ///! ----------------------------------------------- [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string lang_pt {
+            get {
+                return ResourceManager.GetString("lang_pt", resourceCulture);
             }
         }
         
@@ -15040,25 +15062,22 @@ namespace PKHeX.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If you are having issues viewing gender symbols, Options -&gt; Toggle Unicode Text.
+        ///   Looks up a localized string similar to If you are having issues viewing certain symbols/text: Options -&gt; Toggle Font.
         ///
         ///
         ///// Main Window
         ///
-        ///Right Click on Nickname/Nickname box to bring up the ingame-special characters.
+        ///Hold Control when dragging out the Tab PKM to save as ekx.
+        ///Control Click on a Nickname/OT box to bring up the ingame-special characters.
         ///
         ///Control + Click on...
         ///Randomize IVs: Set all IVs to max.
         ///Randomize EVs: Set all EVs to 0.
         ///PP Ups Label: Set all PP Ups to 3.
         ///Friendship Label: Reset Friendship
+        ///QR! to wrap text around QR code.
         ///
-        ///Click on the Save File path (above Boxes): Auto-detect/Reload save.
-        ///
-        ///Control-Drag a Box Slot to Copy-Overwrite
-        ///Alt-Drag a Box Slot to Delete-Overwrite
-        ///
-        ///C [rest of string was truncated]&quot;;.
+        ///Alt click QR! to load ekx data from a QR url loaded to your clipboar [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string shortcuts {
             get {
@@ -19058,17 +19077,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19079,9 +19099,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_de {
             get {
@@ -19091,17 +19110,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19112,9 +19132,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_en {
             get {
@@ -19124,17 +19143,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19145,9 +19165,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_es {
             get {
@@ -19157,17 +19176,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19178,9 +19198,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_fr {
             get {
@@ -19190,17 +19209,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19211,9 +19231,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_it {
             get {
@@ -19223,17 +19242,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19244,9 +19264,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_ja {
             get {
@@ -19256,17 +19275,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19277,9 +19297,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_ko {
             get {
@@ -19289,17 +19308,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to None
-        ///
+        ///Rock Smash (HGSS)
         ///Tall Grass
         ///
         ///Dialga/Palkia
+        ///Cave/Hall of Origin
+        ///
         ///Surfing/Fishing
-        ///
-        ///
         ///
         ///Building
         ///Marsh/Safari
         ///
+        ///Starter/Fossil/Gift (DP)
         ///
         ///
         ///
@@ -19310,9 +19330,8 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///
-        ///
-        ///Starter/Fossil/Gift.
+        ///Distortion World (Pt)
+        ///Starter/Fossil/Gift (Pt).
         /// </summary>
         internal static string text_EncounterType_zh {
             get {
@@ -23235,18 +23254,18 @@ namespace PKHeX.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
-        ///サファイア
-        ///ルビー
-        ///エメラルド
-        ///ファイアレッド
-        ///リーフグリーン
+        ///蓝宝石
+        ///红宝石
+        ///绿宝石
+        ///火红
+        ///叶绿
         ///
-        ///ハートゴールド
-        ///ソウルシルバー
+        ///心金
+        ///魂银
         ///
-        ///ダイヤモンド
-        ///パール
-        ///プラチナ
+        ///钻石
+        ///珍珠
+        ///白金
         ///
         ///
         ///コロシアム/XD
@@ -23254,14 +23273,15 @@ namespace PKHeX.Properties {
         ///
         ///
         ///
-        ///ホワイト
-        ///ブラック
-        ///ホワイト2
-        ///ブラック2
+        ///白
+        ///黑
+        ///白2
+        ///黑2
         ///X
         ///Y
         ///AS
-        ///OR.
+        ///OR
+        ///.
         /// </summary>
         internal static string text_Games_zh {
             get {
